@@ -45,6 +45,48 @@ NovelFile::NovelFile():thisData_(std::make_shared<zone_data::NovelFileData>()) {
 NovelFile::~NovelFile() {
 }
 
+NovelFile::Integer NovelFile::size() const {
+    zone_const_this_data(this);
+    return Integer(var_this_data->paragraphs.size());
+}
+
+const std::list<QString> & NovelFile::getParagraphs() const{
+    zone_const_this_data(this);
+    return var_this_data->paragraphs;
+}
+
+template<typename _t_PARAGRAPHS_t__>
+void NovelFile::_p_setParagraphs(_t_PARAGRAPHS_t__ &&_paragraphs_){
+    zone_this_data(this);
+    var_this_data->paragraphs=std::forward<_t_PARAGRAPHS_t__>(_paragraphs_);
+}
+
+void NovelFile::setParagraphs(const std::list<QString>&_paragraphs_){
+    _p_setParagraphs(_paragraphs_);
+}
+
+void NovelFile::setParagraphs(std::list<QString>&&_paragraphs_){
+    _p_setParagraphs(std::move(_paragraphs_));
+}
+
+void NovelFile::setFile(const QString & arg) {
+    QFile varFile(arg);
+    std::list<QString> varParagraphs;
+    if(varFile.open(QIODevice::ReadOnly|QIODevice::Text)){
+        QTextStream varStream(&varFile);
+        while (varStream.atEnd()==false) {
+            QString varLine=varStream.readLine();
+            varParagraphs.push_back(std::move(varLine));
+        }
+    }
+    setParagraphs(std::move(varParagraphs));
+}
+
+void NovelFile::setFile(QString &&arg) {
+    const QString var(std::move(arg));
+    setFile(var);
+}
+
 /*zone_namespace_end*/
 
 
