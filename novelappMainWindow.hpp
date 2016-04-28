@@ -2,7 +2,6 @@
 #if !defined(____PRAGMA_ONCE_HPP_MAINWINDOW_0___HPP_0x00_)
 #define ____PRAGMA_ONCE_HPP_MAINWINDOW_0___HPP_0x00_() 1
 
-#include <QtWidgets/qmainwindow.h>
 #include <memory>
 #include <cstddef>
 #include <cstdint>
@@ -20,27 +19,25 @@ _t_class_name_&operator=(_t_class_name_ &&)=delete
 #endif
 */
 
-namespace zone_data {
+namespace zone_data{
 class MainWindowData;
 }
 class MainWindow;
 
 template<typename _TYPE_TAG_,unsigned int _N_>
-auto getThisData(const MainWindow *)->_TYPE_TAG_;
+auto getThisData(const MainWindow *)->_TYPE_TAG_ ;
 
-class MainWindow :public QMainWindow {
-    Q_OBJECT
-        
+class MainWindow {
+/*macro_no_copy(MainWindow);*/
 protected:
-    using DataType=std::unique_ptr<zone_data::MainWindowData,void(*)(zone_data::MainWindowData*)>;
-    DataType thisData_{nullptr,nullptr};
+    std::shared_ptr<zone_data::MainWindowData> thisData_;
     template<typename _TYPE_TAG_,unsigned int _N_>
-    friend auto getThisData(const MainWindow *)->_TYPE_TAG_;
+    friend auto getThisData(const MainWindow *)->_TYPE_TAG_ ;
 public:
     explicit MainWindow(decltype(nullptr)) {}
     MainWindow();
     ~MainWindow();
-/*macro_no_copy(MainWindow);*/
+
 };
 
 /*zone_namespace_end*/

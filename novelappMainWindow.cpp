@@ -5,12 +5,12 @@
 
 /*zone_namespace_begin*/
 template<>
-inline auto getThisData<zone_data::MainWindowData *,0>(const MainWindow * arg) ->zone_data::MainWindowData * {
-    return const_cast<MainWindow *>(arg)->thisData_.get();
+inline auto getThisData<zone_data::MainWindowData *,0>(const MainWindow * arg) ->zone_data::MainWindowData *{
+    return const_cast<MainWindow *>(arg)->thisData_.get(); 
 }
 
 template<>
-inline auto getThisData<const zone_data::MainWindowData *,1>(const MainWindow * arg) ->const zone_data::MainWindowData *{
+inline auto getThisData<const zone_data::MainWindowData *,1>(const MainWindow * arg) ->const zone_data::MainWindowData *{ 
     return arg->thisData_.get();
 }
 
@@ -38,13 +38,9 @@ namespace zone_private_function {
 /********************************zone_function********************************/
 }
 
-MainWindow::MainWindow():
-    thisData_(
-        std::unique_ptr<
-        zone_data::MainWindowData,
-        void(*)(zone_data::MainWindowData*)>{new zone_data::MainWindowData,
-        [](zone_data::MainWindowData * arg) {delete arg; } }) {
+MainWindow::MainWindow():thisData_(std::make_shared<zone_data::MainWindowData>()) {
 }
+
 
 MainWindow::~MainWindow() {
 }

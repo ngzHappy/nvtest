@@ -32,7 +32,8 @@ include( $$PWD/quazip/quazip.pri )
 include( $$PWD/quazip/zlib.pri )
 include( $$PWD/lua/lua.pri )
 include( $$PWD/boost/boost.pri )
-#DEFINES += BOOST_FILESYSTEM_SOURCE
+DEFINES += BOOST_FILESYSTEM_SOURCE
+DEFINES += BOOST_SYSTEM_SOURCE
 SOURCES += $$PWD/boost/libs/boost_codecvt_error_category.cpp
 SOURCES += $$PWD/boost/libs/boost_error_code.cpp
 SOURCES += $$PWD/boost/libs/boost_operations.cpp
