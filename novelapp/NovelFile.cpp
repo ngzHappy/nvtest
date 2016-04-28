@@ -2,15 +2,17 @@
 #include "NovelFile.hpp"
 #include "private/NovelFileData.hpp"
 #include "private/NovelFilePrivateFunction.hpp"
+#include <QtCore/qfile.h>
+#include <QtCore/qtextstream.h>
 
 /*zone_namespace_begin*/
 template<>
 inline auto getThisData<zone_data::NovelFileData *,0>(const NovelFile * arg) ->zone_data::NovelFileData *{
-    return const_cast<NovelFile *>(arg)->thisData_.get(); 
+    return const_cast<NovelFile *>(arg)->thisData_.get();
 }
 
 template<>
-inline auto getThisData<const zone_data::NovelFileData *,1>(const NovelFile * arg) ->const zone_data::NovelFileData *{ 
+inline auto getThisData<const zone_data::NovelFileData *,1>(const NovelFile * arg) ->const zone_data::NovelFileData *{
     return arg->thisData_.get();
 }
 
@@ -58,7 +60,21 @@ const std::list<QString> & NovelFile::getParagraphs() const{
 template<typename _t_PARAGRAPHS_t__>
 void NovelFile::_p_setParagraphs(_t_PARAGRAPHS_t__ &&_paragraphs_){
     zone_this_data(this);
-    var_this_data->paragraphs=std::forward<_t_PARAGRAPHS_t__>(_paragraphs_);
+    std::list<QString> var;
+    for(auto &i:_paragraphs_){
+        auto varTemp=process(i);
+        if (varTemp.second) {
+            var.push_back(std::move(varTemp.first));
+        }
+    }
+    var_this_data->paragraphs=std::move(var);
+}
+
+std::pair<QString,bool> NovelFile::process(const QString &arg) {
+    if (arg.isEmpty()) { return{ {},false }; }
+    auto var=arg.trimmed();
+    if (var.isEmpty()) { return{ {},false }; }
+    return {std::move(var),true};
 }
 
 void NovelFile::setParagraphs(const std::list<QString>&_paragraphs_){

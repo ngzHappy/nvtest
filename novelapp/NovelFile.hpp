@@ -31,10 +31,14 @@ protected:
 public:
     explicit NovelFile(decltype(nullptr)) {}
     NovelFile();
-    ~NovelFile();
+    virtual ~NovelFile();
 
     typedef std::int32_t Integer;
     Integer size()const;
+
+    virtual std::pair<QString,bool> process(const QString &);
+    auto begin()const { return paragraphs().begin(); }
+    auto end()const { return paragraphs().end(); }
 public:
     void setFile(const QString &);
     void setFile(QString &&);
@@ -55,8 +59,6 @@ public:
     auto setParagraphs(_List_ &)->void_t<decltype(std::declval<_List_>().begin())>;
     template<typename _List_>
     auto setParagraphs(_List_ &&)->void_t<decltype(std::declval<_List_>().begin())>;
-    auto begin()const { return paragraphs().begin(); }
-    auto end()const { return paragraphs().end(); }
 private: 
     template<typename _t_PARAGRAPHS_t__>
     void _p_setParagraphs(_t_PARAGRAPHS_t__ && /*paragraphs*/);
