@@ -68,6 +68,7 @@ void NovelFile::_p_setParagraphs(_t_PARAGRAPHS_t__ &&_paragraphs_){
         }
     }
     var_this_data->paragraphs=std::move(var);
+    paragraphsChanged();
 }
 
 std::pair<QString,bool> NovelFile::process(const QString &arg) {
