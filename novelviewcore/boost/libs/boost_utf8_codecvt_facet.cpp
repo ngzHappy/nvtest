@@ -11,7 +11,14 @@
 # define BOOST_SYSTEM_NO_DEPRECATED
 #endif
 
+#ifndef BOOST_FILESYSTEM_SOURCE
 #define BOOST_FILESYSTEM_SOURCE
+#endif
+
+#ifndef BOOST_SYSTEM_SOURCE
+#define BOOST_SYSTEM_SOURCE
+#endif
+
 #include <boost/filesystem/config.hpp>
 
 #define BOOST_UTF8_BEGIN_NAMESPACE \

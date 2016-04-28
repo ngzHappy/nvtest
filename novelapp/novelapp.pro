@@ -16,9 +16,13 @@ LIBS+=-L$$OUTPWD -lnovelviewcore
 }
 
 SOURCES += main.cpp\
-        MainWindow.cpp
+        MainWindow.cpp \
+    NovelFile.cpp
 
-HEADERS  += $$PWD/MainWindow.hpp
+HEADERS  += $$PWD/MainWindow.hpp \
+    NovelFile.hpp \
+    private/NovelFileData.hpp \
+    private/NovelFilePrivateFunction.hpp
 HEADERS  += $$PWD/private/MainWindowData.hpp
 HEADERS  += $$PWD/private/MainWindowPrivateFunction.hpp
 HEADERS  += $$PWD/private/app_pre_build.h
