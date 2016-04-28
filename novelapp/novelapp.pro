@@ -1,7 +1,9 @@
 CONFIG += c++14
+CONFIG += console
 
 QT += core gui
 QT += widgets
+QT += concurrent
 
 TARGET = novelview
 TEMPLATE = app
@@ -17,12 +19,16 @@ LIBS+=-L$$OUTPWD -lnovelviewcore
 
 SOURCES += main.cpp\
         MainWindow.cpp \
-    NovelFile.cpp
+    NovelFile.cpp \
+    NovelLayout.cpp
 
-HEADERS  += $$PWD/MainWindow.hpp \
-    NovelFile.hpp \
-    private/NovelFileData.hpp \
-    private/NovelFilePrivateFunction.hpp
+HEADERS  += $$PWD/MainWindow.hpp
+HEADERS  += $$PWD/NovelFile.hpp
+HEADERS  += $$PWD/private/NovelFileData.hpp
+HEADERS  += $$PWD/private/NovelFilePrivateFunction.hpp
+HEADERS  += $$PWD/NovelLayout.hpp
+HEADERS  += $$PWD/private/NovelLayoutData.hpp
+HEADERS  += $$PWD/private/NovelLayoutPrivateFunction.hpp
 HEADERS  += $$PWD/private/MainWindowData.hpp
 HEADERS  += $$PWD/private/MainWindowPrivateFunction.hpp
 HEADERS  += $$PWD/private/app_pre_build.h
