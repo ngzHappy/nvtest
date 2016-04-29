@@ -2,6 +2,9 @@
 #include "MainWindow.hpp"
 #include "private/MainWindowData.hpp"
 #include "private/MainWindowPrivateFunction.hpp"
+#include "NovelFile.hpp"
+#include "NovelWidget.hpp"
+#include "NovelLayout.hpp"
 
 /*zone_namespace_begin*/
 template<>
@@ -44,10 +47,36 @@ MainWindow::MainWindow():
         zone_data::MainWindowData,
         void(*)(zone_data::MainWindowData*)>{new zone_data::MainWindowData,
         [](zone_data::MainWindowData * arg) {delete arg; } }) {
+    zone_this_data(this);
+    var_this_data->novelWidget=new NovelWidget;
+    setCentralWidget(var_this_data->novelWidget);
+    this->setMinimumHeight(512);
+    this->setMinimumWidth(512);
 }
 
 MainWindow::~MainWindow() {
 }
+
+const std::shared_ptr<NovelLayout> & MainWindow::getNovelLayout() const{
+    zone_const_this_data(this);
+    return var_this_data->novelWidget->novelLayout();
+}
+
+template<typename _t_NOVELLAYOUT_t__>
+void MainWindow::_p_setNovelLayout(_t_NOVELLAYOUT_t__ &&_novelLayout_){
+    zone_this_data(this);
+    var_this_data->novelWidget->setNovelLayout(
+        std::forward<_t_NOVELLAYOUT_t__>(_novelLayout_));
+}
+
+void MainWindow::setNovelLayout(const std::shared_ptr<NovelLayout>&_novelLayout_){
+    _p_setNovelLayout(_novelLayout_);
+}
+
+void MainWindow::setNovelLayout(std::shared_ptr<NovelLayout>&&_novelLayout_){
+    _p_setNovelLayout(std::move(_novelLayout_));
+}
+
 
 /*zone_namespace_end*/
 

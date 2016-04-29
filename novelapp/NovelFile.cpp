@@ -40,7 +40,9 @@ namespace zone_private_function {
 /********************************zone_function********************************/
 }
 
-NovelFile::NovelFile():thisData_(std::make_shared<zone_data::NovelFileData>()) {
+NovelFile::NovelFile(QObject * parent):
+    QObject(parent),
+    thisData_(std::make_shared<zone_data::NovelFileData>()) {
 }
 
 

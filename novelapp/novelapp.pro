@@ -20,9 +20,13 @@ LIBS+=-L$$OUTPWD -lnovelviewcore
 SOURCES += main.cpp\
         MainWindow.cpp \
     NovelFile.cpp \
-    NovelLayout.cpp
+    NovelLayout.cpp \
+    NovelWidget.cpp
 
 HEADERS  += $$PWD/MainWindow.hpp
+HEADERS  += $$PWD/NovelWidget.hpp
+HEADERS  += $$PWD/private/NovelWidgetData.hpp
+HEADERS  += $$PWD/private/NovelWidgetPrivateFunction.hpp
 HEADERS  += $$PWD/NovelFile.hpp
 HEADERS  += $$PWD/private/NovelFileData.hpp
 HEADERS  += $$PWD/private/NovelFilePrivateFunction.hpp

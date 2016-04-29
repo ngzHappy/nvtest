@@ -35,8 +35,8 @@ protected:
     template<typename _TYPE_TAG_,unsigned int _N_>
     friend auto getThisData(const NovelFile *)->_TYPE_TAG_;
 public:
-    explicit NovelFile(decltype(nullptr)) {}
-    NovelFile();
+
+    explicit NovelFile(QObject * /**/=nullptr);
     virtual ~NovelFile();
 
     typedef std::int32_t Integer;
