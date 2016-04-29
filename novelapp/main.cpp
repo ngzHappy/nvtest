@@ -14,7 +14,10 @@ int main(int argc, char *argv[])
     MainWindow window;
     window.setNovelLayout(layout);
     layout->setNovelFile(file);
-    window.show();
+    window.showMaximized();
+    auto font=layout->font();
+    font.setPixelSize(26);
+    layout->setFont(font);
     layout->setNeedLayout(true);
 
     return app.exec();

@@ -57,6 +57,7 @@ public:
         std::int32_t lineEnd;
     };
     std::shared_ptr<Page> currentPage;
+    double firstLineSpace=0/*    */;
 };
 
 }

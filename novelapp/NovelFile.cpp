@@ -4,6 +4,7 @@
 #include "private/NovelFilePrivateFunction.hpp"
 #include <QtCore/qfile.h>
 #include <QtCore/qtextstream.h>
+#include <set>
 
 /*zone_namespace_begin*/
 template<>

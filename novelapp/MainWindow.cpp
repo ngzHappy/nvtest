@@ -50,8 +50,8 @@ MainWindow::MainWindow():
     zone_this_data(this);
     var_this_data->novelWidget=new NovelWidget;
     setCentralWidget(var_this_data->novelWidget);
-    this->setMinimumHeight(512);
-    this->setMinimumWidth(512);
+    this->setMinimumHeight(600);
+    this->setMinimumWidth(800);
 }
 
 MainWindow::~MainWindow() {
@@ -77,7 +77,7 @@ void MainWindow::setNovelLayout(std::shared_ptr<NovelLayout>&&_novelLayout_){
     _p_setNovelLayout(std::move(_novelLayout_));
 }
 
- 
+
 
 /*zone_namespace_end*/
 

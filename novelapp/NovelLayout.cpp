@@ -36,6 +36,13 @@ NovelLayoutData::NovelLayoutData():fontMetrics(QFont{}) {
 
 NovelLayoutData::~NovelLayoutData() {
 }
+
+QTextOption textOption=[]() {
+    QTextOption textOption;
+    textOption.setAlignment(Qt::AlignJustify);
+    return std::move(textOption);
+}();
+
 /********************************zone_data********************************/
 }
 
@@ -46,21 +53,31 @@ void doPreLayout(
     NovelLayout *argThis,
     zone_data::NovelLayoutData::Item &argItem
 ) {
+    zone_this_data(argThis);
     auto & width=argThis->width();
     QTextLayout layout(argItem.string,argThis->font());
+    layout.setTextOption(zone_data::textOption);
     layout.setCacheEnabled(false);
 
-    double height=0;
-    const double leading=argThis->fontMetrics().leading();
+    constexpr const double height=123;
     layout.beginLayout();
     argItem.lineCount=0;
+
+    bool isFirstLine=true;
     for (;;) {
         QTextLine line=layout.createLine();
         if (!line.isValid()) { break; }
-        line.setLineWidth(width);
-        height+=leading;
-        line.setPosition({ 0.0,height });
-        height+=line.height();
+        if (isFirstLine) {
+            isFirstLine=false; 
+            line.setLineWidth(std::max<double>(
+                var_this_data->firstLineSpace,
+                width-var_this_data->firstLineSpace));
+            line.setPosition({ var_this_data->firstLineSpace,height });
+        }
+        else {
+            line.setLineWidth(width);
+            line.setPosition({ 0.0,height });
+        }
         ++argItem.lineCount;
     }
 
@@ -264,6 +281,9 @@ void NovelLayout::_p_setFont(_t_FONT_t__ &&_font_) {
 
     var_this_data->font=std::forward<_t_FONT_t__>(_font_);
     var_this_data->fontMetrics=QFontMetricsF(var_this_data->font);
+    /*首行缩进*/
+    var_this_data->firstLineSpace=
+        var_this_data->fontMetrics.width(QStringLiteral("    "));
     /*获得行高*/
     var_this_data->lineHeight=var_this_data->fontMetrics.lineSpacing();
     /*计算每页可以保存的行数*/
@@ -352,6 +372,7 @@ void NovelLayout::drawPage(std::int32_t argPage,QImage & argImage) {
             var_this_data->font
             );
         var_this_data->currentPage->layouts.push_back(varTextLayout);
+        varTextLayout->setTextOption(zone_data::textOption);
 
         {
             auto & layout=*varTextLayout;
@@ -359,12 +380,22 @@ void NovelLayout::drawPage(std::int32_t argPage,QImage & argImage) {
             auto leading=var_this_data->fontMetrics.leading();
             auto & height=dy;
             layout.beginLayout();
+            bool isFirstLine=true;
             for (;;++varLineNum) {
                 QTextLine line=layout.createLine();
                 if (!line.isValid()) { break; }
-                line.setLineWidth(width);
                 height+=leading;
-                line.setPosition({ 0.0,height });
+                if(isFirstLine){
+                    isFirstLine=false;
+                    line.setLineWidth(std::max<double>(
+                        var_this_data->firstLineSpace,
+                        width-var_this_data->firstLineSpace));
+                    line.setPosition({ var_this_data->firstLineSpace,height });
+                }
+                else {
+                    line.setLineWidth(width);
+                    line.setPosition({ 0.0,height });
+                }
                 height+=line.height();
                 var_this_data->currentPage->lines.insert(
                 { varLineNum,std::move(line) });
