@@ -163,9 +163,9 @@ void drawPage(
         auto & currentPage=*(var_this_data->currentPage);
         for (auto & line:currentPage.lines) {
             if (line.first<currentPage.lineBegin) { continue; }
-            if (line.first>currentPage.lineEnd) { continue; }
-            if (line.second.y()<-0.05) { continue; }
-            line.second.draw(&varPainter,{ 0,0 });
+            if (line.first<currentPage.lineEnd) {
+                line.second.draw(&varPainter,{ 0,0 });
+            }
         }
     }
 }
@@ -339,6 +339,7 @@ void NovelLayout::drawPage(std::int32_t argPage,QImage & argImage) {
     auto varEndLineNum=varLine+var_this_data->linesOfPage;
     auto varBlockEnd=var_this_data->items.end();
 
+    /*设置起止行号*/
     var_this_data->currentPage->lineBegin=varLine;
     var_this_data->currentPage->lineEnd=varEndLineNum;
 
@@ -358,14 +359,13 @@ void NovelLayout::drawPage(std::int32_t argPage,QImage & argImage) {
             auto leading=var_this_data->fontMetrics.leading();
             auto & height=dy;
             layout.beginLayout();
-            for (;;) {
+            for (;;++varLineNum) {
                 QTextLine line=layout.createLine();
                 if (!line.isValid()) { break; }
                 line.setLineWidth(width);
                 height+=leading;
                 line.setPosition({ 0.0,height });
                 height+=line.height();
-                ++varLineNum;
                 var_this_data->currentPage->lines.insert(
                 { varLineNum,std::move(line) });
             }
