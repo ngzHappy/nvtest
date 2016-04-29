@@ -10,7 +10,7 @@
 #include <cmath>
 /*zone_namespace_begin*/
 template<>
-inline auto getThisData<zone_data::NovelLayoutData *,0>(const NovelLayout * arg) ->zone_data::NovelLayoutData *{
+inline auto getThisData<zone_data::NovelLayoutData *,0>(const NovelLayout * arg) ->zone_data::NovelLayoutData * {
     return const_cast<NovelLayout *>(arg)->thisData_.get();
 }
 
@@ -29,8 +29,8 @@ inline auto getThisData<const zone_data::NovelLayoutData *,1>(const NovelLayout 
 namespace zone_data {
 /********************************zone_data********************************/
 NovelLayoutData::NovelLayoutData():fontMetrics(QFont{}) {
-    width=64;
-    height=36;
+    width=512;
+    height=512;
 }
 
 
@@ -45,7 +45,7 @@ namespace zone_private_function {
 void doPreLayout(
     NovelLayout *argThis,
     zone_data::NovelLayoutData::Item &argItem
-    ) {
+) {
     auto & width=argThis->width();
     QTextLayout layout(argItem.string,argThis->font());
     layout.setCacheEnabled(false);
@@ -59,7 +59,7 @@ void doPreLayout(
         if (!line.isValid()) { break; }
         line.setLineWidth(width);
         height+=leading;
-        line.setPosition({0.0,height});
+        line.setPosition({ 0.0,height });
         height+=line.height();
         ++argItem.lineCount;
     }
@@ -71,17 +71,17 @@ void doPreLayout(
 void doLinesLayout(
     NovelLayout *,
     zone_data::NovelLayoutData::Item &argItem,
-    std::int32_t &currentLine){
+    std::int32_t &currentLine) {
     if (argItem.lineCount<=0) { return; }
     argItem.startLine=currentLine;
     currentLine+=argItem.lineCount;
-    argItem.endLine=currentLine;
-    ++currentLine;
+    argItem.endLine=currentLine-1;
 }
 
 void doLayout(NovelLayout *argThis) {
     zone_this_data(argThis);
 
+    if (var_this_data->needLayout==false) { return; }
     if (bool(var_this_data->file)==false) { return; }
 
     struct Lock {
@@ -164,7 +164,8 @@ void drawPage(
         for (auto & line:currentPage.lines) {
             if (line.first<currentPage.lineBegin) { continue; }
             if (line.first>currentPage.lineEnd) { continue; }
-            line.second.draw(&varPainter,{0,0});
+            if (line.second.y()<-0.05) { continue; }
+            line.second.draw(&varPainter,{ 0,0 });
         }
     }
 }
@@ -181,73 +182,73 @@ NovelLayout::NovelLayout(QObject * parent):
 NovelLayout::~NovelLayout() {
 }
 
-const std::shared_ptr<NovelFile> & NovelLayout::getNovelFile() const{
+const std::shared_ptr<NovelFile> & NovelLayout::getNovelFile() const {
     zone_const_this_data(this);
     return var_this_data->file;
 }
 
 template<typename _t_NOVELFILE_t__>
-void NovelLayout::_p_setNovelFile(_t_NOVELFILE_t__ &&_novelFile_){
+void NovelLayout::_p_setNovelFile(_t_NOVELFILE_t__ &&_novelFile_) {
     zone_this_data(this);
     var_this_data->file=std::forward<_t_NOVELFILE_t__>(_novelFile_);
     doLayout();
 }
 
-void NovelLayout::setNovelFile(const std::shared_ptr<NovelFile>&_novelFile_){
+void NovelLayout::setNovelFile(const std::shared_ptr<NovelFile>&_novelFile_) {
     _p_setNovelFile(_novelFile_);
 }
 
-void NovelLayout::setNovelFile(std::shared_ptr<NovelFile>&&_novelFile_){
+void NovelLayout::setNovelFile(std::shared_ptr<NovelFile>&&_novelFile_) {
     _p_setNovelFile(std::move(_novelFile_));
 }
 
-const double & NovelLayout::getWidth() const{
+const double & NovelLayout::getWidth() const {
     zone_const_this_data(this);
     return var_this_data->width;
 }
 
 template<typename _t_WIDTH_t__>
-void NovelLayout::_p_setWidth(_t_WIDTH_t__ &&_width_){
+void NovelLayout::_p_setWidth(_t_WIDTH_t__ &&_width_) {
     zone_this_data(this);
     auto varWidth=std::max<std::int32_t>(_width_,32);
-    if(var_this_data->width==varWidth){return;}
+    if (var_this_data->width==varWidth) { return; }
     var_this_data->width=varWidth;
     doLayout();
     widthChanged({});
 }
 
-void NovelLayout::setWidth(const double&_width_){
+void NovelLayout::setWidth(const double&_width_) {
     _p_setWidth(_width_);
 }
 
-void NovelLayout::setWidth(double&&_width_){
+void NovelLayout::setWidth(double&&_width_) {
     _p_setWidth(std::move(_width_));
 }
 
-const double & NovelLayout::getHeight() const{
+const double & NovelLayout::getHeight() const {
     zone_const_this_data(this);
     return var_this_data->height;
 }
 
 template<typename _t_HEIGHT_t__>
-void NovelLayout::_p_setHeight(_t_HEIGHT_t__ &&_height_){
+void NovelLayout::_p_setHeight(_t_HEIGHT_t__ &&_height_) {
     zone_this_data(this);
     auto varHeight=std::max<std::int32_t>(_height_,32);
-    if(varHeight==var_this_data->height){return;}
+    if (varHeight==var_this_data->height) { return; }
     var_this_data->height=varHeight;
     doLayout();
     heightChanged({});
 }
 
-void NovelLayout::setHeight(const double&_height_){
+void NovelLayout::setHeight(const double&_height_) {
     _p_setHeight(_height_);
 }
 
-void NovelLayout::setHeight(double&&_height_){
+void NovelLayout::setHeight(double&&_height_) {
     _p_setHeight(std::move(_height_));
 }
 
-const QFont & NovelLayout::getFont() const{
+const QFont & NovelLayout::getFont() const {
     zone_const_this_data(this);
     return var_this_data->font;
 }
@@ -258,7 +259,7 @@ const QFontMetricsF & NovelLayout::fontMetrics() const {
 }
 
 template<typename _t_FONT_t__>
-void NovelLayout::_p_setFont(_t_FONT_t__ &&_font_){
+void NovelLayout::_p_setFont(_t_FONT_t__ &&_font_) {
     zone_this_data(this);
 
     var_this_data->font=std::forward<_t_FONT_t__>(_font_);
@@ -280,7 +281,7 @@ void NovelLayout::_p_setFont(_t_FONT_t__ &&_font_){
     zone_private_function::doLayout(this);
 }
 
-void NovelLayout::setFont(const QFont&_font_){
+void NovelLayout::setFont(const QFont&_font_) {
     {
         zone_this_data(this);
         if (_font_==var_this_data->font) { return; }
@@ -289,7 +290,7 @@ void NovelLayout::setFont(const QFont&_font_){
     fontChanged({});
 }
 
-void NovelLayout::setFont(QFont&&_font_){
+void NovelLayout::setFont(QFont&&_font_) {
     {
         zone_this_data(this);
         if (_font_==var_this_data->font) { return; }
@@ -317,7 +318,7 @@ void NovelLayout::drawPage(std::int32_t argPage,QImage & argImage) {
     /*计算行号*/
     auto varLine=var_this_data->linesOfPage*argPage;
     /*找到段落*/
-    auto varBlock= std::lower_bound(
+    auto varBlock=std::lower_bound(
         var_this_data->items.begin(),
         var_this_data->items.end(),
         varLine,
@@ -328,6 +329,7 @@ void NovelLayout::drawPage(std::int32_t argPage,QImage & argImage) {
     var_this_data->currentPage=std::make_shared<
         zone_data::NovelLayoutData::Page
     >();
+    var_this_data->currentPage->index=argPage;
 
     auto dy=
         ((varBlock->startLine)-varLine)*var_this_data->lineHeight;
@@ -341,57 +343,56 @@ void NovelLayout::drawPage(std::int32_t argPage,QImage & argImage) {
     var_this_data->currentPage->lineEnd=varEndLineNum;
 
     /*布局*/
-    for (;(varLineNum<varEndLineNum);) {
-        for (;varBlock!=varBlockEnd;++varBlock) {
-            auto varTextLayout=std::make_shared<QTextLayout>(
-                varBlock->string,
-                var_this_data->font
-                );
-            var_this_data->currentPage->layouts.push_back(varTextLayout);
+    for (; (varLineNum<varEndLineNum); ++varBlock) {
+        if (varBlock==varBlockEnd) { break; }
 
-            {
-                auto & layout=*varTextLayout;
-                auto & width=var_this_data->width;
-                auto leading=var_this_data->fontMetrics.leading();
-                auto & height=dy;
-                layout.beginLayout();
-                for (;;) {
-                    QTextLine line=layout.createLine();
-                    if (!line.isValid()) { break; }
-                    line.setLineWidth(width);
-                    height+=leading;
-                    line.setPosition({ 0.0,height });
-                    height+=line.height();
-                    ++varLineNum;
-                    var_this_data->currentPage->lines.insert(
-                    {varLineNum,std::move(line)});
-                }
-                layout.endLayout();
+        auto varTextLayout=std::make_shared<QTextLayout>(
+            varBlock->string,
+            var_this_data->font
+            );
+        var_this_data->currentPage->layouts.push_back(varTextLayout);
+
+        {
+            auto & layout=*varTextLayout;
+            auto & width=var_this_data->width;
+            auto leading=var_this_data->fontMetrics.leading();
+            auto & height=dy;
+            layout.beginLayout();
+            for (;;) {
+                QTextLine line=layout.createLine();
+                if (!line.isValid()) { break; }
+                line.setLineWidth(width);
+                height+=leading;
+                line.setPosition({ 0.0,height });
+                height+=line.height();
+                ++varLineNum;
+                var_this_data->currentPage->lines.insert(
+                { varLineNum,std::move(line) });
             }
-
-        }/*~for*/
+            layout.endLayout();
+        }
 
     }/*~布局*/
 
     return zone_private_function::drawPage(this,argImage);
 }
 
-std::int32_t NovelLayout::pagesCount()const{
+std::int32_t NovelLayout::pagesCount()const {
     zone_const_this_data(this);
     return var_this_data->pagesCount;
 }
 
-std::int32_t NovelLayout::linesCuont()const{
+std::int32_t NovelLayout::linesCuont()const {
     zone_const_this_data(this);
     return var_this_data->linesCount+0.5;
 }
 
-QSize NovelLayout::getSize() const{
+QSize NovelLayout::getSize() const {
     return QSize(width(),height());
 }
 
 template<typename _t_SIZE_t__>
-void NovelLayout::_p_setSize(_t_SIZE_t__ &&_size_){
+void NovelLayout::_p_setSize(_t_SIZE_t__ &&_size_) {
     zone_this_data(this);
     bool varIsWidthChanged=true;
     bool varIsHeightChanged=true;
@@ -403,10 +404,10 @@ void NovelLayout::_p_setSize(_t_SIZE_t__ &&_size_){
         varIsWidthChanged=false;
     }
 
-    if(var_this_data->height==varHeight){
+    if (var_this_data->height==varHeight) {
         varIsHeightChanged=false;
     }
-    
+
     if (varIsHeightChanged||varIsWidthChanged) {
         var_this_data->width=varWidth;
         var_this_data->height=varHeight;
@@ -417,16 +418,43 @@ void NovelLayout::_p_setSize(_t_SIZE_t__ &&_size_){
 
 }
 
-void NovelLayout::setSize(const QSize&_size_){
+void NovelLayout::setSize(const QSize&_size_) {
     _p_setSize(_size_);
 }
 
-void NovelLayout::setSize(QSize&&_size_){
+void NovelLayout::setSize(QSize&&_size_) {
     _p_setSize(std::move(_size_));
 }
 
 void NovelLayout::doLayout() {
     _p_setFont(font());
+}
+
+const bool & NovelLayout::getNeedLayout() const {
+    zone_const_this_data(this);
+    return var_this_data->needLayout;
+}
+
+template<typename _t_NEEDLAYOUT_t__>
+void NovelLayout::_p_setNeedLayout(_t_NEEDLAYOUT_t__ &&_needLayout_) {
+    zone_this_data(this);
+    if (var_this_data->needLayout==_needLayout_) { return; };
+    if (var_this_data->needLayout) {
+        var_this_data->needLayout=false;
+    }
+    else {
+        var_this_data->needLayout=true;
+        doLayout();
+    }
+    needLayoutChanged({});
+}
+
+void NovelLayout::setNeedLayout(const bool&_needLayout_) {
+    _p_setNeedLayout(_needLayout_);
+}
+
+void NovelLayout::setNeedLayout(bool&&_needLayout_) {
+    _p_setNeedLayout(std::move(_needLayout_));
 }
 
 /*zone_namespace_end*/

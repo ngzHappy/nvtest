@@ -47,7 +47,7 @@ public:
     double linesOfPage;
     std::int32_t pagesCount;
     std::int32_t linesCount;
-
+    bool needLayout=false;
     class Page {
     public:
         std::int32_t index=0;

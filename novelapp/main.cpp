@@ -10,11 +10,12 @@ int main(int argc, char *argv[])
     auto file=std::make_shared<NovelFile>();
     file->setFile(R"(D:\opencv_project_test\a.txt)");
     auto layout=std::make_shared<NovelLayout>();
-    layout->setNovelFile(file);
-
+   
     MainWindow window;
     window.setNovelLayout(layout);
+    layout->setNovelFile(file);
     window.show();
+    layout->setNeedLayout(true);
 
     return app.exec();
 }

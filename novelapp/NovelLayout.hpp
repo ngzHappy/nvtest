@@ -34,6 +34,7 @@ signals:
     void heightChanged(QPrivateSignal);
     void fontChanged(QPrivateSignal);
     void layoutChanged(QPrivateSignal);
+    void needLayoutChanged(QPrivateSignal);
 
 protected:
     std::shared_ptr<zone_data::NovelLayoutData> thisData_;
@@ -74,6 +75,13 @@ public:
     void setSize(QSize&& /*size*/);
     QSize getSize() const;
     QSize size() const { return getSize(); }
+public:
+    void setNeedLayout(const bool& /*needLayout*/);
+    void setNeedLayout(bool&& /*needLayout*/);
+    const bool & getNeedLayout() const;
+    const bool & needLayout() const{ return getNeedLayout();}
+private: template<typename _t_NEEDLAYOUT_t__>
+    void _p_setNeedLayout(_t_NEEDLAYOUT_t__ && /*needLayout*/);
 private:
     template<typename _t_SIZE_t__>
     void _p_setSize(_t_SIZE_t__ && /*size*/);
@@ -94,6 +102,9 @@ private:
 
 private:
     Q_PROPERTY(QFont font READ font WRITE setFont NOTIFY fontChanged)
+
+private:
+    Q_PROPERTY(bool needLayout READ needLayout WRITE setNeedLayout NOTIFY needLayoutChanged)
 
 private:
     private slots:void doLayout();

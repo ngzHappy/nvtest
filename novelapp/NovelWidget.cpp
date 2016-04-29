@@ -5,6 +5,7 @@
 #include "NovelFile.hpp"
 #include "NovelLayout.hpp"
 #include <QtGui/qpainter.h>
+#include <QtGui/QKeyEvent>
 
 /*zone_namespace_begin*/
 template<>
@@ -44,6 +45,7 @@ namespace zone_private_function {
 NovelWidget::NovelWidget(QWidget * p):
     QWidget(p),
     thisData_(std::make_shared<zone_data::NovelWidgetData>()) {
+    setFocusPolicy(Qt::StrongFocus);
 }
 
 
@@ -84,6 +86,42 @@ void NovelWidget::setNovelLayout(std::shared_ptr<NovelLayout>&&_novelLayout_){
     _p_setNovelLayout(std::move(_novelLayout_));
 }
 
+void NovelWidget::nextPage() {
+    zone_this_data(this);
+    if (var_this_data->layout) {
+        auto varMax=std::max<std::int32_t>(0,
+            var_this_data->layout->pagesCount()-1);
+        ++var_this_data->currentPage;
+        var_this_data->currentPage=std::min(
+            var_this_data->currentPage,
+            varMax);
+    }
+    update();
+}
+
+void NovelWidget::firstPage() {
+    zone_this_data(this);
+    var_this_data->currentPage=0;
+    update();
+}
+
+void NovelWidget::previousPage() {
+    zone_this_data(this);
+    var_this_data->currentPage=std::max(0,
+        var_this_data->currentPage-1);
+    update();
+}
+
+void NovelWidget::lastPage() {
+    zone_this_data(this);
+    if (var_this_data->layout) {
+        auto varMax=std::max<std::int32_t>(0,
+            var_this_data->layout->pagesCount()-1);
+        var_this_data->currentPage=varMax;
+    }
+    update();
+}
+
 void NovelWidget::paintEvent(QPaintEvent *){
     zone_this_data(this);
     if(var_this_data->layout){
@@ -100,6 +138,16 @@ void NovelWidget::paintEvent(QPaintEvent *){
         QPainter painter(this);
         painter.drawImage(0,0,varImage);
     }
+}
+
+void NovelWidget::keyPressEvent(QKeyEvent *event){
+    auto varKey=event->key();
+    if(varKey==Qt::Key_Left){
+        previousPage();
+    }else if(varKey==Qt::Key_Right){
+        nextPage();
+    }
+    QWidget::keyPressEvent(event);
 }
 
 /*zone_namespace_end*/

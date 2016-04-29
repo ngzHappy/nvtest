@@ -10,16 +10,7 @@
 #include <type_traits>
 
 /*zone_namespace_begin*/
-
-/*
-#if !defined(macro_no_copy)
-#define macro_no_copy(_t_class_name_) private:_t_class_name_(const _t_class_name_ &)=delete; \
-_t_class_name_(_t_class_name_ &&)=delete; \
-_t_class_name_&operator=(const _t_class_name_ &)=delete; \
-_t_class_name_&operator=(_t_class_name_ &&)=delete
-#endif
-*/
-
+class NovelLayout;
 namespace zone_data {
 class MainWindowData;
 }
@@ -40,7 +31,15 @@ public:
     explicit MainWindow(decltype(nullptr)) {}
     MainWindow();
     ~MainWindow();
-/*macro_no_copy(MainWindow);*/
+
+public:
+    void setNovelLayout(const std::shared_ptr<NovelLayout>& /*novelLayout*/);
+    void setNovelLayout(std::shared_ptr<NovelLayout>&& /*novelLayout*/);
+    const std::shared_ptr<NovelLayout> & getNovelLayout() const;
+    const std::shared_ptr<NovelLayout> & novelLayout() const{ return getNovelLayout();}
+private: 
+    template<typename _t_NOVELLAYOUT_t__>
+    void _p_setNovelLayout(_t_NOVELLAYOUT_t__ && /*novelLayout*/);
 };
 
 /*zone_namespace_end*/

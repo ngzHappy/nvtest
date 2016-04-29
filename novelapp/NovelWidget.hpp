@@ -30,8 +30,15 @@ protected:
 public:
     explicit NovelWidget(QWidget * /**/=nullptr);
     ~NovelWidget();
+public slots:
+
+    void nextPage();
+    void firstPage();
+    void lastPage();
+    void previousPage();
 protected:
     void paintEvent(QPaintEvent *event)override;
+    void keyPressEvent(QKeyEvent *event)override;
 public:
     void setNovelLayout(const std::shared_ptr<NovelLayout>& /*novelLayout*/);
     void setNovelLayout(std::shared_ptr<NovelLayout>&& /*novelLayout*/);
