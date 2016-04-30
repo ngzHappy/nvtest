@@ -3,6 +3,13 @@ QT     += widgets
 QT     += network
 QT     += core
 
+!win32-msvc*{
+QMAKE_CFLAGS+=-std=c99
+QMAKE_CFLAGS+=-Wno-old-style-declaration
+QMAKE_CFLAGS+=-Wno-unused-parameter
+QMAKE_CFLAGS+=-Wno-unused-variable
+}
+
 CONFIG(debug,debug|release){
 TARGET = novelviewcored
 }else{
@@ -27,6 +34,7 @@ HEADERS += $$PWD/private/core_pre_build.h
 HEADERS += $$PWD/private/msvc_core_pre_build.h
 HEADERS += $$PWD/novelviewcore_global.hpp
 
+include( $$PWD/gumbo/gumbo.pri )
 include( $$PWD/core_utility.pri )
 include( $$PWD/quazip/quazip.pri )
 include( $$PWD/quazip/zlib.pri )
