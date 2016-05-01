@@ -7,17 +7,10 @@
 #include <cstdint>
 #include <utility>
 #include <type_traits>
-
+#include <QtCore/QByteArray>
+#include <QtCore/QString>
+#include <QList>
 /*zone_namespace_begin*/
-
-/*
-#if !defined(macro_no_copy)
-#define macro_no_copy(_t_class_name_) private:_t_class_name_(const _t_class_name_ &)=delete; \
-_t_class_name_(_t_class_name_ &&)=delete; \
-_t_class_name_&operator=(const _t_class_name_ &)=delete; \
-_t_class_name_&operator=(_t_class_name_ &&)=delete
-#endif
-*/
 
 namespace zone_data{
 class DingDianProcessData;
@@ -28,7 +21,7 @@ template<typename _TYPE_TAG_,unsigned int _N_>
 auto getThisData(const DingDianProcess *)->_TYPE_TAG_ ;
 
 class DingDianProcess {
-/*macro_no_copy(DingDianProcess);*/
+
 protected:
     using ThisDataType=std::unique_ptr<zone_data::DingDianProcessData,void(*)(zone_data::DingDianProcessData *)>;
     ThisDataType thisData_{nullptr,nullptr};
@@ -39,6 +32,28 @@ public:
     DingDianProcess();
     ~DingDianProcess();
 
+    class MainPage {
+    public:
+        class Item {
+        public:
+            QString title;
+            QString url;
+        };
+        QList<Item> items;
+        QString title;
+    };
+
+    MainPage processMainPage()const;
+
+public:
+    void setMainPage(const QByteArray& /*mainPage*/);
+    void setMainPage(QByteArray&& /*mainPage*/);
+    const QByteArray & getMainPage() const;
+    const QByteArray & mainPage() const{ return getMainPage();}
+private: 
+    template<typename _t_MAINPAGE_t__>
+    void _p_setMainPage(_t_MAINPAGE_t__ && /*mainPage*/);
+    
 };
 
 /*zone_namespace_end*/
