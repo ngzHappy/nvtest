@@ -1,4 +1,6 @@
-HEADERS += $$PWD \
+INCLUDEPATH += $$PWD
+
+HEADERS += \
     $$PWD/HtmlDownLoad.hpp \
     $$PWD/private/HtmlDownLoadData.hpp \
     $$PWD/private/HtmlDownLoadPrivateFunction.hpp
