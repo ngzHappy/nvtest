@@ -7,28 +7,26 @@
 #include <cstdint>
 #include <utility>
 #include <type_traits>
+#include <QtCore/qstring.h>
+#include <QtCore/qurl.h>
+#include <QtCore/qobject.h>
+
+#include "../novelviewcore_global.hpp"
 
 /*zone_namespace_begin*/
 
-/*
-#if !defined(macro_no_copy)
-#define macro_no_copy(_t_class_name_) private:_t_class_name_(const _t_class_name_ &)=delete; \
-_t_class_name_(_t_class_name_ &&)=delete; \
-_t_class_name_&operator=(const _t_class_name_ &)=delete; \
-_t_class_name_&operator=(_t_class_name_ &&)=delete
-#endif
-*/
-
 namespace zone_data{
 class HtmlDownLoadData;
+class HtmlDownLoadPack;
 }
 class HtmlDownLoad;
 
 template<typename _TYPE_TAG_,unsigned int _N_>
 auto getThisData(const HtmlDownLoad *)->_TYPE_TAG_ ;
 
-class HtmlDownLoad {
-/*macro_no_copy(HtmlDownLoad);*/
+class NOVELVIEWCORESHARED_EXPORT HtmlDownLoad :public QObject{
+    Q_OBJECT
+
 protected:
     using ThisDataType=std::unique_ptr<zone_data::HtmlDownLoadData,void(*)(zone_data::HtmlDownLoadData *)>;
     ThisDataType thisData_{nullptr,nullptr};
@@ -39,6 +37,9 @@ public:
     HtmlDownLoad();
     ~HtmlDownLoad();
 
+signals:
+    void download(const QUrl &);
+    void downLoadFinished(QByteArray,std::shared_ptr<zone_data::HtmlDownLoadPack>);
 };
 
 /*zone_namespace_end*/

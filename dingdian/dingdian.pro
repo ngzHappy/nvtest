@@ -1,5 +1,5 @@
 CONFIG += c++14
-CONFIG += console
+#CONFIG += console
 
 QT += core gui
 QT += widgets
@@ -28,11 +28,6 @@ HEADERS  += $$PWD/private/MainWindowData.hpp
 HEADERS  += $$PWD/private/MainWindowPrivateFunction.hpp
 HEADERS  += $$PWD/private/app_pre_build.h
 HEADERS  += $$PWD/private/msvc_app_pre_build.h
-
-HEADERS  += $$PWD/HtmlDownLoad.hpp
-HEADERS  += $$PWD/private/HtmlDownLoadData.hpp
-HEADERS  += $$PWD/private/HtmlDownLoadPrivateFunction.hpp
-SOURCES  += $$PWD/HtmlDownLoad.cpp
 
 CONFIG += precompile_header
 win32-msvc*{

@@ -1,4 +1,7 @@
-HEADERS += $$PWD
+HEADERS += $$PWD \
+    $$PWD/HtmlDownLoad.hpp \
+    $$PWD/private/HtmlDownLoadData.hpp \
+    $$PWD/private/HtmlDownLoadPrivateFunction.hpp
 
 HEADERS += \
     $$PWD/NovelFile.hpp \
@@ -14,7 +17,8 @@ HEADERS += \
 SOURCES += \
     $$PWD/NovelFile.cpp \
     $$PWD/NovelLayout.cpp \
-    $$PWD/NovelWidget.cpp
+    $$PWD/NovelWidget.cpp \
+    $$PWD/HtmlDownLoad.cpp
 
 
 

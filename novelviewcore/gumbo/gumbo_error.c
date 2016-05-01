@@ -152,6 +152,7 @@ static const char* find_next_newline(
   for (; *c && *c != '\n'; ++c)
     ;
   return c;
+  (void)original_text;
 }
 
 GumboError* gumbo_add_error(GumboParser* parser) {
