@@ -19,9 +19,14 @@ LIBS+=-L$$OUTPWD -lnovelviewcored
 LIBS+=-L$$OUTPWD -lnovelviewcore
 }
 
+
+HEADERS +=$$PWD/DingDianProcess.hpp
+HEADERS +=$$PWD/private/DingDianProcessData.hpp
+HEADERS +=$$PWD/private/DingDianProcessPrivateFunction.hpp
+SOURCES +=$$PWD/DingDianProcess.cpp
+
 SOURCES += main.cpp\
         MainWindow.cpp
-
 
 HEADERS  += $$PWD/MainWindow.hpp
 HEADERS  += $$PWD/private/MainWindowData.hpp
