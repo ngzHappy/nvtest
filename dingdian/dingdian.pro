@@ -22,11 +22,17 @@ LIBS+=-L$$OUTPWD -lnovelviewcore
 SOURCES += main.cpp\
         MainWindow.cpp
 
+
 HEADERS  += $$PWD/MainWindow.hpp
 HEADERS  += $$PWD/private/MainWindowData.hpp
 HEADERS  += $$PWD/private/MainWindowPrivateFunction.hpp
 HEADERS  += $$PWD/private/app_pre_build.h
 HEADERS  += $$PWD/private/msvc_app_pre_build.h
+
+HEADERS  += $$PWD/HtmlDownLoad.hpp
+HEADERS  += $$PWD/private/HtmlDownLoadData.hpp
+HEADERS  += $$PWD/private/HtmlDownLoadPrivateFunction.hpp
+SOURCES  += $$PWD/HtmlDownLoad.cpp
 
 CONFIG += precompile_header
 win32-msvc*{
