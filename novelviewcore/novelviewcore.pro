@@ -3,6 +3,7 @@ CONFIG += c++14
 QT     += widgets
 QT     += network
 QT     += core
+QT     += concurrent
 
 !win32-msvc*{
 QMAKE_CFLAGS+=-std=c99
@@ -35,6 +36,7 @@ HEADERS += $$PWD/private/core_pre_build.h
 HEADERS += $$PWD/private/msvc_core_pre_build.h
 HEADERS += $$PWD/novelviewcore_global.hpp
 
+include( $$PWD/widget/widget.pri )
 include( $$PWD/gumbo/gumbo.pri )
 include( $$PWD/core_utility.pri )
 include( $$PWD/quazip/quazip.pri )

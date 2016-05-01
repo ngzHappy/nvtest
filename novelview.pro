@@ -5,6 +5,7 @@ novelapp.file=$$PWD/novelapp/novelapp.pro
 
 novelapp.depends+=novelviewcore
 
-SUBDIRS += novelviewcore
+SUBDIRS += novelviewcore \
+    dingdian
 SUBDIRS += novelapp
 

@@ -9,6 +9,8 @@
 #include <utility>
 #include <type_traits>
 
+#include "../novelviewcore_global.hpp"
+
 /*zone_namespace_begin*/
 
 namespace zone_data{
@@ -20,7 +22,7 @@ class NovelLayout;
 template<typename _TYPE_TAG_,unsigned int _N_>
 auto getThisData(const NovelWidget *)->_TYPE_TAG_ ;
 
-class NovelWidget :public QWidget {
+class NOVELVIEWCORESHARED_EXPORT NovelWidget :public QWidget {
     Q_OBJECT
 
 protected:

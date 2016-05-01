@@ -12,6 +12,8 @@
 #include <type_traits>
 #include <iterator>
 
+#include "../novelviewcore_global.hpp"
+
 /*zone_namespace_begin*/
 
 namespace zone_data {
@@ -22,7 +24,7 @@ class NovelFile;
 template<typename _TYPE_TAG_,unsigned int _N_>
 auto getThisData(const NovelFile *)->_TYPE_TAG_;
 
-class NovelFile :public QObject {
+class NOVELVIEWCORESHARED_EXPORT NovelFile :public QObject {
     Q_OBJECT
 
 private:
@@ -43,7 +45,7 @@ public:
     Integer size()const;
 
     virtual std::pair<QString,bool> process(const QString &);
-    
+
     auto begin()const { return paragraphs().cbegin(); }
     auto end()const { return paragraphs().cend(); }
 

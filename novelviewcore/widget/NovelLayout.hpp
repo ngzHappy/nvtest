@@ -10,6 +10,9 @@
 #include <cstdint>
 #include <utility>
 #include <type_traits>
+
+#include "../novelviewcore_global.hpp"
+
 class QImage;
 
 /*zone_namespace_begin*/
@@ -23,7 +26,7 @@ class NovelFile;
 template<typename _TYPE_TAG_,unsigned int _N_>
 auto getThisData(const NovelLayout *)->_TYPE_TAG_;
 
-class NovelLayout :public QObject {
+class NOVELVIEWCORESHARED_EXPORT NovelLayout :public QObject {
     Q_OBJECT
 
 private:
@@ -79,7 +82,7 @@ public:
     void setNeedLayout(const bool& /*needLayout*/);
     void setNeedLayout(bool&& /*needLayout*/);
     const bool & getNeedLayout() const;
-    const bool & needLayout() const{ return getNeedLayout();}
+    const bool & needLayout() const { return getNeedLayout(); }
 private: template<typename _t_NEEDLAYOUT_t__>
     void _p_setNeedLayout(_t_NEEDLAYOUT_t__ && /*needLayout*/);
 private:

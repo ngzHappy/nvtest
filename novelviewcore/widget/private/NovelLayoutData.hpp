@@ -6,7 +6,7 @@
 #include <vector>
 #include <map>
 #include <list>
-#include "NovelFile.hpp"
+#include "../NovelFile.hpp"
 #include <QtGui/qfont.h>
 #include <QtGui/QFontMetricsF>
 #include <QtGui/qtextlayout.h>

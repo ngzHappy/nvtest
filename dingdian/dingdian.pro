@@ -4,8 +4,9 @@ CONFIG += console
 QT += core gui
 QT += widgets
 QT += concurrent
+QT += network
 
-TARGET = novelview
+TARGET = dingdian
 TEMPLATE = app
 
 include( $$PWD/../novelviewcore/core_utility.pri )
@@ -38,5 +39,3 @@ PRECOMPILED_HEADER  += $$PWD/private/app_pre_build.h
     QMAKE_LFLAGS += -Wl,-rpath .
 }
 DESTDIR = $$OUTPWD
-
-
