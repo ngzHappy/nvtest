@@ -1,4 +1,5 @@
 CONFIG += c++14
+
 QT     += widgets
 QT     += network
 QT     += core
