@@ -6,9 +6,9 @@
 #include <QtCore/QByteArray>
 /*zone_namespace_begin*/
 
-namespace zone_data{
+namespace zone_data {
 
-class DingDianProcessData  {
+class DingDianProcessData {
 public:
     DingDianProcessData();
     ~DingDianProcessData();

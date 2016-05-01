@@ -34,22 +34,22 @@ HtmlDownLoadData::~HtmlDownLoadData() {
 
 HtmlDownLoadThread::HtmlDownLoadThread(){
     this->moveToThread(this);
+    connect(this,&HtmlDownLoadThread::downLoad,
+        this,&HtmlDownLoadThread::_p_downLoad,
+        Qt::QueuedConnection);
 
     isAboutToExit_=false;
     this->start();
-
-    connect(this,&HtmlDownLoadThread::downLoad,
-            this,&HtmlDownLoadThread::_p_downLoad,
-            Qt::QueuedConnection);
-
-    manager_=new QNetworkAccessManager;
-    manager_->moveToThread(this);
 }
 
 void HtmlDownLoadThread::_p_downLoad(std::shared_ptr<HtmlDownLoadPack> argPack){
     if(argPack){
         if(argPack->isNeedDownLoad()){
             const QUrl & varUrl=argPack->url();
+
+            if (manager_==nullptr) {
+                manager_=new QNetworkAccessManager(this);
+            }
 
             if (manager_) {
                 QNetworkRequest varReq(varUrl);
@@ -79,24 +79,17 @@ HtmlDownLoadPack::HtmlDownLoadPack(HtmlDownLoad * argTarget,const QUrl & argUrl)
 }
 
 HtmlDownLoadThread::~HtmlDownLoadThread(){
-    delete manager_;
-    manager_=nullptr;
     this->quit();
-    this->wait(1234);
 }
 
 void HtmlDownLoadThread::aboutToStopThread(){
     isAboutToExit_=true;
-    delete manager_;
-    manager_=nullptr;
-    disconnect()/*关闭所有信号槽*/;
     this->quit();
+    this->wait(11);
 }
 
 void HtmlDownLoadThread::run(){
-    if(isAboutToExit_==false){
-        exec();
-    }
+    if(isAboutToExit_==false){exec();}
 }
 
 std::shared_ptr<HtmlDownLoadThread> htmlDownLoadThread;
@@ -104,7 +97,12 @@ std::shared_ptr<HtmlDownLoadThread> HtmlDownLoadThread::instance(){
     if(htmlDownLoadThread){return htmlDownLoadThread;}
     htmlDownLoadThread=std::shared_ptr<HtmlDownLoadThread>(
                 new HtmlDownLoadThread,
-                [](HtmlDownLoadThread *arg){delete arg;});
+                [](HtmlDownLoadThread *arg){
+        arg->quit();
+        arg->wait(123);
+        arg->terminate();
+        arg->deleteLater();
+    });
     qAddPostRoutine([](){
         auto varHtmlDownLoadThread=htmlDownLoadThread;
         if(varHtmlDownLoadThread){
