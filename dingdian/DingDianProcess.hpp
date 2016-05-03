@@ -2,6 +2,7 @@
 #if !defined(____PRAGMA_ONCE_HPP_DINGDIANPROCESS_0___HPP_0x00_)
 #define ____PRAGMA_ONCE_HPP_DINGDIANPROCESS_0___HPP_0x00_() 1
 
+#include <list>
 #include <memory>
 #include <cstddef>
 #include <cstdint>
@@ -44,6 +45,7 @@ public:
     };
 
     MainPage processMainPage()const;
+    std::list<QString> processAPage(const QByteArray&)const;
 
 public:
     void setMainPage(const QByteArray& /*mainPage*/);

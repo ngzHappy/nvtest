@@ -3,7 +3,7 @@
 #define ____PRAGMA_ONCE_HPP_DATA_MAINWINDOW_0__0x00() 1
 
 #include <memory>
-
+#include "CentralWidget.hpp"
 /*zone_namespace_begin*/
 
 class NovelWidget;
@@ -14,7 +14,7 @@ public:
     MainWindowData();
     ~MainWindowData();
 
-    NovelWidget * novelWidget;
+    CentralWidget * novelWidget;
 };
 
 }

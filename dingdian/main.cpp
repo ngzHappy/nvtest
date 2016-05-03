@@ -42,6 +42,21 @@ int main(int argc,char *argv[]) {
     });
     downLoad.download(QUrl("http://www.23wx.com/html/18/18191/"));
 
+    HtmlDownLoad downLoad1;
+    downLoad1.connect(&downLoad1,&HtmlDownLoad::downLoadFinished,
+        [](QByteArray arg,auto) {
+            {
+                QFile file("xxx1.txt");
+                file.open(QIODevice::WriteOnly);
+                file.write(arg);
+            }
+
+            DingDianProcess process;
+            process.processAPage(arg);
+
+    });
+    downLoad1.download(QUrl("http://m.23wx.com/html/18/18191/25448822.html"));
+
     return app.exec();
 }
 

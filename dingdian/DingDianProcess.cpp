@@ -8,6 +8,7 @@
 #include <list>
 #include <string>
 #include <regex>
+using namespace std::literals;
 
 /*zone_namespace_begin*/
 template<>
@@ -48,7 +49,7 @@ bool genUrl(const char * argText,QByteArray & ans) {
         for (auto i:values) {
             i=i.trimmed();
             if (i.startsWith("url=")) {
-                ans=i.mid(4); 
+                ans=i.mid(4);
                 if (ans.isEmpty()) { continue; }
                 if (ans.endsWith('/')||ans.endsWith('\\')) { return true; }
                 ans.push_back('/');
@@ -59,7 +60,7 @@ bool genUrl(const char * argText,QByteArray & ans) {
     return false;
 }
 
-void readColumn(GumboNode *argColumn,DingDianProcess::MainPage & varAns){
+void readColumn(GumboNode *argColumn,DingDianProcess::MainPage & varAns) {
     auto &children=argColumn->v.element.children;
     if (children.length==1) {
         auto * varItem=reinterpret_cast<GumboNode *>(children.data[0]);
@@ -261,11 +262,14 @@ void DingDianProcess::_p_setMainPage(_t_MAINPAGE_t__ &&_mainPage_) {
 
     /*转到utf8编码*/
     QByteArray varMainPage=std::forward<_t_MAINPAGE_t__>(_mainPage_);
-    QTextCodec * varGBKCodeC=QTextCodec::codecForHtml(varMainPage);
-    if (varGBKCodeC) {
-        QString varMainPageUtf16=varGBKCodeC->toUnicode(varMainPage);
-        varMainPage=varMainPageUtf16.toUtf8();
-    }
+    do {
+        QTextCodec * varGBKCodeC=QTextCodec::codecForHtml(varMainPage);
+        if (varGBKCodeC==QTextCodec::codecForName("utf8")) { break; }
+        if (varGBKCodeC) {
+            QString varMainPageUtf16=varGBKCodeC->toUnicode(varMainPage);
+            varMainPage=varMainPageUtf16.toUtf8();
+        }
+    } while (false);
 
     var_this_data->mainPage=std::move(varMainPage);
 }
@@ -286,6 +290,97 @@ void DingDianProcess::setMainPage(const QByteArray&_mainPage_) {
 
 void DingDianProcess::setMainPage(QByteArray&&_mainPage_) {
     _p_setMainPage(std::move(_mainPage_));
+}
+
+std::list<QString> DingDianProcess::processAPage(const QByteArray&argHtml)const {
+    std::list<QString> varAns;
+    if (argHtml.isEmpty()) { return{}; }
+
+    QByteArray varHtml=argHtml;
+    do {
+        /*转到utf8编码*/
+        QTextCodec * varGBKCodeC=QTextCodec::codecForHtml(varHtml);
+        if (varGBKCodeC==QTextCodec::codecForName("utf8")) { break; }
+        if (varGBKCodeC) {
+            QString varMainPageUtf16=varGBKCodeC->toUnicode(varHtml);
+            varHtml=varMainPageUtf16.toUtf8();
+        }
+
+    } while (false);
+
+    /*解析html*/
+    class _GumboParser {
+    public:
+        GumboOutput * parser=nullptr;
+        const QByteArray html;
+        _GumboParser(const QByteArray & var_html):html(var_html) {
+            parser=gumbo_parse_with_options(
+                &kGumboDefaultOptions,
+                html.data(),html.size());
+        }
+        ~_GumboParser() { gumbo_destroy_output(&kGumboDefaultOptions,parser); }
+    };
+    std::shared_ptr<GumboOutput> parser;
+    {
+        auto varTemp=std::make_shared<_GumboParser>(varHtml);
+        parser=std::shared_ptr<GumboOutput>(varTemp,
+            varTemp->parser);
+    }
+
+    GumboNode * rootNode=parser->root;
+    if (rootNode==nullptr) { return{}; }
+    GumboNode * textNode=nullptr;
+
+    {
+        std::list<GumboNode *>nodes;
+        nodes.push_back(rootNode);
+
+        while (nodes.empty()==false) {
+            rootNode=nodes.front(); nodes.pop_front();
+            if (rootNode->type!=GUMBO_NODE_ELEMENT) { continue; }
+            auto &element=rootNode->v.element;
+
+            if (element.tag==GUMBO_TAG_DIV) {
+                auto * att_text=gumbo_get_attribute(&element.attributes,"class");
+                if (att_text) {
+                    auto * att_id=gumbo_get_attribute(&element.attributes,"id");
+                    if (att_id) {
+                        if (att_id->value=="txt"s) {
+                            if (att_text->value=="txt"s) {
+                                textNode=rootNode;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            auto &children=rootNode->v.element.children;
+            using IntType=std::remove_const_t<std::remove_reference_t<decltype(children.length)>>;
+            for (IntType i=0; i<children.length; ++i) {
+                nodes.push_back(reinterpret_cast<GumboNode *>(children.data[i]));
+            }
+
+        }
+
+    }
+
+    if (textNode==nullptr) { return{}; }
+
+    if (textNode->v.element.children.length<=0) { return{}; }
+
+    using IntType=std::remove_const_t<std::remove_reference_t<
+        decltype(textNode->v.element.children.length)>>;
+    for (IntType i=0; i<textNode->v.element.children.length; ++i) {
+        GumboNode * node=
+            reinterpret_cast<GumboNode *>(textNode->v.element.children.data[i]);
+        if (node->type==GUMBO_NODE_TEXT) {
+            varAns.push_back(QString::fromUtf8(node->v.text.text)
+            .trimmed());
+        }
+    }
+
+    return std::move(varAns);
 }
 
 /*zone_namespace_end*/

@@ -48,7 +48,7 @@ MainWindow::MainWindow():
         void(*)(zone_data::MainWindowData*)>{new zone_data::MainWindowData,
         [](zone_data::MainWindowData * arg) {delete arg; } }) {
     zone_this_data(this);
-    var_this_data->novelWidget=new NovelWidget;
+    var_this_data->novelWidget=new CentralWidget;
     setCentralWidget(var_this_data->novelWidget);
     this->setMinimumHeight(600);
     this->setMinimumWidth(800);
