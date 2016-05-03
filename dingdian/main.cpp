@@ -5,9 +5,11 @@
 #include <HtmlDownLoad.hpp>
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>
-int main(int argc, char *argv[])
-{
-    QApplication app(argc, argv);
+#include <QtCore/qfile.h>
+#include "DingDianProcess.hpp"
+
+int main(int argc,char *argv[]) {
+    QApplication app(argc,argv);
 
     MainWindow window;
     {
@@ -27,9 +29,18 @@ int main(int argc, char *argv[])
     HtmlDownLoad downLoad;
     downLoad.connect(&downLoad,&HtmlDownLoad::downLoadFinished,
         [](QByteArray arg,auto) {
-        qDebug()<<arg.size();
+            {
+                QFile file("xxx.txt");
+                file.open(QIODevice::WriteOnly);
+                file.write(arg);
+            }
+
+            DingDianProcess process;
+            process.setMainPage(arg);
+            process.processMainPage();
+
     });
-    downLoad.download(QUrl("http://www.baidu.com"));
+    downLoad.download(QUrl("http://www.23wx.com/html/18/18191/"));
 
     return app.exec();
 }

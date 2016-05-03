@@ -1,5 +1,7 @@
 CONFIG += c++14
-#CONFIG += console
+win32-msvc*{
+CONFIG += console
+}
 
 QT += core gui
 QT += widgets

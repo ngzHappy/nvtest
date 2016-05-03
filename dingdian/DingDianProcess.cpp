@@ -3,15 +3,20 @@
 #include "private/DingDianProcessData.hpp"
 #include "private/DingDianProcessPrivateFunction.hpp"
 #include <gumbo/gumbo.h>
+#include <QtCore/qbuffer.h>
+#include <QtCore/qtextcodec.h>
+#include <list>
+#include <string>
+#include <regex>
 
 /*zone_namespace_begin*/
 template<>
-inline auto getThisData<zone_data::DingDianProcessData *,0>(const DingDianProcess * arg) ->zone_data::DingDianProcessData *{
-    return const_cast<DingDianProcess *>(arg)->thisData_.get(); 
+inline auto getThisData<zone_data::DingDianProcessData *,0>(const DingDianProcess * arg) ->zone_data::DingDianProcessData * {
+    return const_cast<DingDianProcess *>(arg)->thisData_.get();
 }
 
 template<>
-inline auto getThisData<const zone_data::DingDianProcessData *,1>(const DingDianProcess * arg) ->const zone_data::DingDianProcessData *{ 
+inline auto getThisData<const zone_data::DingDianProcessData *,1>(const DingDianProcess * arg) ->const zone_data::DingDianProcessData *{
     return arg->thisData_.get();
 }
 
@@ -35,12 +40,83 @@ DingDianProcessData::~DingDianProcessData() {
 
 namespace zone_private_function {
 /********************************zone_function********************************/
+
+bool genUrl(const char * argText,QByteArray & ans) {
+    QByteArray varText(argText);
+    if (varText.indexOf("url=")>0) {
+        auto values=varText.split(';');
+        for (auto i:values) {
+            i=i.trimmed();
+            if (i.startsWith("url=")) {
+                ans=i.mid(4); 
+                if (ans.isEmpty()) { continue; }
+                if (ans.endsWith('/')||ans.endsWith('\\')) { return true; }
+                ans.push_back('/');
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void readColumn(GumboNode *argColumn,DingDianProcess::MainPage & varAns){
+    auto &children=argColumn->v.element.children;
+    if (children.length==1) {
+        auto * varItem=reinterpret_cast<GumboNode *>(children.data[0]);
+        if (varItem->type!=GUMBO_NODE_ELEMENT) { return; }
+        auto * attribute=gumbo_get_attribute(&varItem->v.element.attributes,"href");
+        if (attribute==nullptr) { return; }
+        DingDianProcess::MainPage::Item item;
+        item.url=QString::fromUtf8(attribute->value).trimmed();
+        if (varItem->v.element.children.length==1) {
+            auto * textItem=reinterpret_cast<GumboNode *>(
+                varItem->v.element.children.data[0]);
+            if (textItem->type==GUMBO_NODE_TEXT) {
+                item.title=QString::fromUtf8(
+                    textItem->v.text.text).trimmed();
+            }
+            else { return; }
+        }
+        else { return; }
+        varAns.items.push_back(std::move(item));
+    }
+}
+
+void readRow(GumboNode *argRow,DingDianProcess::MainPage & varAns) {
+    auto &children=argRow->v.element.children;
+    using IntType=std::remove_const_t<std::remove_reference_t<decltype(children.length)>>;
+    for (IntType i=0; i<children.length; ++i) {
+        auto * varColumn=reinterpret_cast<GumboNode *>(children.data[i]);
+        readColumn(varColumn,varAns);
+    }
+}
+
 void processMainPage(
     const DingDianProcess * argThis,
     DingDianProcess::MainPage & varAns
 ) {
     zone_const_this_data(argThis);
     varAns.items.clear();
+    varAns.title.clear();
+
+    /*搜索并设置title*/
+    {
+        const static std::regex reg(u8R"(<dd><h1>(.*?)</h1></dd>)");
+        const char * varBegin=argThis->mainPage().constBegin();
+        const char * varEnd=argThis->mainPage().constEnd();
+        std::cmatch rvarAns;
+        if (std::regex_search(varBegin,varEnd,rvarAns,reg)) {
+            varAns.title=QString::fromUtf8(rvarAns[1].first,rvarAns[1].length())
+                .trimmed();
+        }
+        else {
+            qDebug()<<"html format error!";
+            return;
+        }
+
+    }
+
+    /*解析html*/
     class _GumboParser {
     public:
         GumboOutput * parser=nullptr;
@@ -58,33 +134,143 @@ void processMainPage(
         parser=std::shared_ptr<GumboOutput>(varTemp,
             varTemp->parser);
     }
-    
 
+    GumboNode * bodyNode=nullptr;
+    QByteArray url;
+    {
+        GumboNode * rootNode=parser->root;
+        if (rootNode==nullptr) { return; }
 
+        {
+            std::list<GumboNode *> nodes;
+            nodes.push_back(rootNode);
+            while (nodes.empty()==false) {
+
+                rootNode=nodes.front(); nodes.pop_front();
+                if (rootNode->type!=GumboNodeType::GUMBO_NODE_ELEMENT) {
+                    continue;
+                }
+
+                auto & element=rootNode->v.element;
+
+                if (element.tag==GUMBO_TAG_BODY) {
+                    bodyNode=rootNode;
+                    if (url.isEmpty()==false) { break; }
+                }
+                else if (element.tag==GUMBO_TAG_META) {
+                    auto * attribute=gumbo_get_attribute(&element.attributes,"content");
+                    if (attribute) {
+                        if (genUrl(attribute->value,url)) {
+                            if (bodyNode) { break; }
+                        }
+                    }
+                }
+                else {
+                    auto &children=rootNode->v.element.children;
+                    using IntType=std::remove_const_t<std::remove_reference_t<decltype(children.length)>>;
+                    for (IntType i=0; i<children.length; ++i) {
+                        nodes.push_back(reinterpret_cast<GumboNode *>(children.data[i]));
+                    }
+                }
+
+            }
+        }
+    }
+
+    if (bodyNode==nullptr) { return; }
+    if (url.isEmpty()) { return; }
+    GumboNode * tableNode=nullptr;
+    /*table*/
+    {
+        std::list<GumboNode *> nodes;
+        nodes.push_back(bodyNode);
+
+        while (nodes.empty()==false) {
+            GumboNode * rootNode=nodes.front(); nodes.pop_front();
+            if (rootNode->type!=GumboNodeType::GUMBO_NODE_ELEMENT) {
+                continue;
+            }
+
+            if (rootNode->v.element.tag==GUMBO_TAG_TABLE) {
+                tableNode=rootNode; break;
+            }
+            else {
+                auto &children=rootNode->v.element.children;
+                using IntType=std::remove_const_t<std::remove_reference_t<decltype(children.length)>>;
+                for (IntType i=0; i<children.length; ++i) {
+                    nodes.push_back(reinterpret_cast<GumboNode *>(children.data[i]));
+                }
+            }
+
+        }
+
+    }
+
+    if (tableNode==nullptr) { return; }
+
+    {
+        std::list<GumboNode *> nodes;
+        nodes.push_back(tableNode);
+
+        while (nodes.empty()==false) {
+            GumboNode * rootNode=nodes.front(); nodes.pop_front();
+            if (rootNode->type!=GumboNodeType::GUMBO_NODE_ELEMENT) {
+                continue;
+            }
+
+            if (rootNode->v.element.tag==GUMBO_TAG_TR) {
+                readRow(rootNode,varAns);
+            }
+            else {
+                auto &children=rootNode->v.element.children;
+                using IntType=std::remove_const_t<std::remove_reference_t<decltype(children.length)>>;
+                for (IntType i=0; i<children.length; ++i) {
+                    nodes.push_back(reinterpret_cast<GumboNode *>(children.data[i]));
+                }
+            }
+
+        }
+
+    }
+
+    if (varAns.items.isEmpty()==false) {
+        for (auto & i:varAns.items) {
+            i.url=url+i.url;
+        }
+    }
 }
 /********************************zone_function********************************/
 }
 
 DingDianProcess::DingDianProcess():thisData_(ThisDataType(
-                         new zone_data::DingDianProcessData,
-                         [](zone_data::DingDianProcessData *arg){delete arg;})) {
+    new zone_data::DingDianProcessData,
+    [](zone_data::DingDianProcessData *arg) {delete arg; })) {
 }
 
 DingDianProcess::~DingDianProcess() {
 }
 
-const QByteArray & DingDianProcess::getMainPage() const{
+const QByteArray & DingDianProcess::getMainPage() const {
     zone_const_this_data(this);
     return var_this_data->mainPage;
 }
 
 template<typename _t_MAINPAGE_t__>
-void DingDianProcess::_p_setMainPage(_t_MAINPAGE_t__ &&_mainPage_){
+void DingDianProcess::_p_setMainPage(_t_MAINPAGE_t__ &&_mainPage_) {
     zone_this_data(this);
-    var_this_data->mainPage=std::forward<_t_MAINPAGE_t__>(_mainPage_);
+
+    /*转到utf8编码*/
+    QByteArray varMainPage=std::forward<_t_MAINPAGE_t__>(_mainPage_);
+    QTextCodec * varGBKCodeC=QTextCodec::codecForHtml(varMainPage);
+    if (varGBKCodeC) {
+        QString varMainPageUtf16=varGBKCodeC->toUnicode(varMainPage);
+        varMainPage=varMainPageUtf16.toUtf8();
+    }
+
+    var_this_data->mainPage=std::move(varMainPage);
 }
 
-auto DingDianProcess::processMainPage() const ->MainPage{
+auto DingDianProcess::processMainPage() const ->MainPage {
     MainPage varAns;
     zone_const_this_data(this);
     if (var_this_data->mainPage.isEmpty()) {
@@ -94,11 +280,11 @@ auto DingDianProcess::processMainPage() const ->MainPage{
     return std::move(varAns);
 }
 
-void DingDianProcess::setMainPage(const QByteArray&_mainPage_){
+void DingDianProcess::setMainPage(const QByteArray&_mainPage_) {
     _p_setMainPage(_mainPage_);
 }
 
-void DingDianProcess::setMainPage(QByteArray&&_mainPage_){
+void DingDianProcess::setMainPage(QByteArray&&_mainPage_) {
     _p_setMainPage(std::move(_mainPage_));
 }
 
