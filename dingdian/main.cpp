@@ -2,36 +2,56 @@
 #include <QApplication>
 #include <stdexcept>
 #include <QtGui/qpainter.h>
+#include <QtCore/qfile.h>
+#include <QtGui/QDesktopServices> 
 static void drawAndSaveHelp() {
-    QImage image{512,80,QImage::Format_RGBA8888};
-    image.fill(QColor(0,0,0,0));
-
-    QPainter painter(&image);
-
-    painter.setRenderHint(QPainter::HighQualityAntialiasing);
-    painter.setRenderHint(QPainter::TextAntialiasing);
 
     {
-        auto font=painter.font();
-        font.setPixelSize(22);
-        painter.setFont(font);
+        QFile file(qApp->applicationDirPath()+"/help.txt");
+        if (file.open(QIODevice::WriteOnly)) {
+            file.write("http://www.23wx.com/");
+            file.write("\n");
+        }
+        else {
+            qDebug()<<"can not create file???";
+            return;
+        }
     }
 
-    painter.drawText(
-        20,
-        painter.fontMetrics().ascent(),
-        QString::fromUtf8(u8R"(
+    QDesktopServices::openUrl(QString("http://www.23wx.com/"));
+
+    {
+        QImage image{ 512,80,QImage::Format_RGBA8888 };
+        image.fill(QColor(0,0,0,0));
+
+        QPainter painter(&image);
+
+        painter.setRenderHint(QPainter::HighQualityAntialiasing);
+        painter.setRenderHint(QPainter::TextAntialiasing);
+
+        {
+            auto font=painter.font();
+            font.setPixelSize(22);
+            painter.setFont(font);
+        }
+
+        painter.drawText(
+            20,
+            painter.fontMetrics().ascent(),
+            QString::fromUtf8(u8R"(
 默认:http://www.23wx.com/html/18/18191/
 )"));
 
-    painter.drawText(
-        20,
-        50+painter.fontMetrics().ascent(),
-        QString::fromUtf8(u8R"(
+        painter.drawText(
+            20,
+            50+painter.fontMetrics().ascent(),
+            QString::fromUtf8(u8R"(
 dingdian http://www.23wx.com/html/18/18191/
 )"));
 
-    image.save(qApp->applicationDirPath()+"/help.png");
+        image.save(qApp->applicationDirPath()+"/help.png");
+    }
+
 }
 
 int main(int argc,char *argv[]) try{
@@ -40,6 +60,7 @@ int main(int argc,char *argv[]) try{
     drawAndSaveHelp();
 
     MainWindow window;
+    window.setStyleSheet(u8R"(MainWindow{background:darkgray;})");
     if (argc>1) {
         window.setMainPage(QString::fromUtf8(argv[1]));
     }

@@ -180,7 +180,7 @@ void ItemWidget::renderToImage(QImage & argImage) {
         painter.drawPath(path);
     }
 
-    painter.setPen(QPen(QColor(0,0,0),1));
+    painter.setPen(QPen(QColor(25,25,25,190),2));
     painter.setBrush(QColor(0,0,0));
 
     {
