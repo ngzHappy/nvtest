@@ -22,7 +22,7 @@ class ListView :public QListView {
 MACRO_PROTECTED:
     zone_data::ListViewData * data_=nullptr;
 public:
-    typedef std::shared_ptr<std::function<QWidget*(QWidget*,QModelIndex)>> CreateFunction;
+    using CreateFunction=std::shared_ptr<std::function<QWidget*(QWidget*,QModelIndex)>> ;
 public:
 
     ListView(QWidget * /*parent*/=nullptr);
@@ -36,14 +36,15 @@ public:
 
     void closeAllItem();
     void setModel(QAbstractItemModel *model)override;
-
+signals:
+    void onCurrentChanged(QPrivateSignal);
 private:
     template<typename _t_CREATEFUNCTION_t__>
     void _p_setCreateFunction(_t_CREATEFUNCTION_t__ && /*createFunction*/);
 protected:
     void paintGC();
     void paintEvent(QPaintEvent*)override;
-
+    void currentChanged(const QModelIndex &current,const QModelIndex &previous)override;
 };
 
 /*zone_namespace_end*/

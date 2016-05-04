@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <utility>
 #include <type_traits>
-
+#include "DingDianProcess.hpp"
 /*zone_namespace_begin*/
 class NovelLayout;
 namespace zone_data {
@@ -31,7 +31,12 @@ public:
     explicit MainWindow(decltype(nullptr)) {}
     MainWindow();
     ~MainWindow();
-
+public:
+    void setMainPage(const QString&);
+    void setMainPage(const DingDianProcess::MainPage& /*mainPage*/);
+    void setMainPage(DingDianProcess::MainPage&& /*mainPage*/);
+    const DingDianProcess::MainPage & getMainPage() const;
+    const DingDianProcess::MainPage & mainPage() const{ return getMainPage();}
 public:
     void setNovelLayout(const std::shared_ptr<NovelLayout>& /*novelLayout*/);
     void setNovelLayout(std::shared_ptr<NovelLayout>&& /*novelLayout*/);
@@ -40,6 +45,8 @@ public:
 private:
     template<typename _t_NOVELLAYOUT_t__>
     void _p_setNovelLayout(_t_NOVELLAYOUT_t__ && /*novelLayout*/);
+    template<typename _t_MAINPAGE_t__>
+    void _p_setMainPage(_t_MAINPAGE_t__ && /*mainPage*/);
 };
 
 /*zone_namespace_end*/

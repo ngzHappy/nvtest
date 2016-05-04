@@ -18,7 +18,7 @@ namespace zone_data {
 class DingDianProcessData;
 }
 class DingDianProcess;
-
+ 
 template<typename _TYPE_TAG_,unsigned int _N_>
 auto getThisData(const DingDianProcess *)->_TYPE_TAG_;
 

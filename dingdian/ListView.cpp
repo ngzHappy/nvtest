@@ -20,8 +20,8 @@
 #include <QtCore/qdebug.h>
 #include <QtGui/qbackingstore.h>
 #include <stdexcept>
-#include <QPaintEvent>
-#include <QTimer>
+#include <QtGui/QPaintEvent>
+#include <QtCore/QTimer>
 /*zone_namespace_begin*/
 
 namespace {
@@ -259,7 +259,7 @@ QSize ListViewItemDeletegate::sizeHint(
     if (var_pos!=var_this_data->allOpenedItems.end()) {
         return var_pos->second->sizeHint(option,index);
     }
-    return QSize(64,64);
+    return QSize(64,16);
 }
 
 void ListViewItemDeletegate::updateEditorGeometry(
@@ -400,6 +400,13 @@ void ListView::paintEvent(QPaintEvent* e) {
     QListView::paintEvent(e);
     zone_private_function::paintGC(this);
     paintGC();
+}
+
+void ListView::currentChanged(
+    const QModelIndex &current,
+    const QModelIndex &previous) {
+    QListView::currentChanged(current,previous);
+    onCurrentChanged({});
 }
 
 void ListView::setModel(QAbstractItemModel *arg_model) {

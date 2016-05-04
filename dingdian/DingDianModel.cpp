@@ -46,6 +46,11 @@ DingDianModel::DingDianModel():thisData_(ThisDataType(
 DingDianModel::~DingDianModel() {
 }
 
+int DingDianModel::rowCount(const QModelIndex &) const{
+    zone_const_this_data(this);
+    return var_this_data->mainPage.items.size();
+}
+
 QVariant DingDianModel::data(
     const QModelIndex &index,
     int role) const {

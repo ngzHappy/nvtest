@@ -5,6 +5,7 @@
 #include <memory>
 #include <QtWidgets/qwidget.h>
 #include "../ListView.hpp"
+#include <HtmlDownLoad.hpp>
 class NovelLayout;
 class NovelFile;
 class NovelWidget;
@@ -20,6 +21,8 @@ public:
     std::shared_ptr<NovelLayout> novelLayout;
     NovelWidget * novelWidget=nullptr;
     ListView * listView=nullptr;
+    DingDianProcess::MainPage mainPage;
+    std::shared_ptr<HtmlDownLoad> pageHtmlDownLoad;
 };
 
 }

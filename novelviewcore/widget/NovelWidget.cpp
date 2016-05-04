@@ -141,11 +141,15 @@ void NovelWidget::paintEvent(QPaintEvent *){
 }
 
 void NovelWidget::keyPressEvent(QKeyEvent *event){
-    auto varKey=event->key();
-    if(varKey==Qt::Key_Left){
-        previousPage();
-    }else if(varKey==Qt::Key_Right){
-        nextPage();
+    {
+        Qt::Key varKey=static_cast<Qt::Key>(event->key());
+        if (varKey==Qt::Key_Left) {
+            previousPage();
+        }
+        else if (varKey==Qt::Key_Right) {
+            nextPage();
+        }
+        onKeyPressed(varKey);
     }
     QWidget::keyPressEvent(event);
 }

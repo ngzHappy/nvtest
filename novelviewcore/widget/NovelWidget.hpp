@@ -32,6 +32,10 @@ protected:
 public:
     explicit NovelWidget(QWidget * /**/=nullptr);
     ~NovelWidget();
+signals:
+
+    void onKeyPressed(Qt::Key);
+
 public slots:
 
     void nextPage();

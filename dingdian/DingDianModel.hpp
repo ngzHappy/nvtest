@@ -39,7 +39,7 @@ public:
         TOOLTIP_ROLE=Qt::ToolTipRole,
     };
     QVariant data(const QModelIndex &index,int role) const override;
-
+    int rowCount(const QModelIndex &) const override;
 public:
     void setMainPage(const DingDianProcess::MainPage& /*mainPage*/);
     void setMainPage(DingDianProcess::MainPage&& /*mainPage*/);

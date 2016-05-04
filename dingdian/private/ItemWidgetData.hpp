@@ -3,7 +3,8 @@
 #define ____PRAGMA_ONCE_HPP_DATA_ITEMWIDGET_0__0x00() 1
 
 #include <memory>
-
+#include <QtCore/qstring.h>
+#include <QtGui/qcolor.h>
 /*zone_namespace_begin*/
 
 namespace zone_data{
@@ -13,6 +14,9 @@ public:
     ItemWidgetData();
     ~ItemWidgetData();
 
+    QColor normal_color_;
+    QString text_;
+    QString url_;
 };
 
 }

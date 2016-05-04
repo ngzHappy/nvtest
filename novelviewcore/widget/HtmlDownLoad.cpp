@@ -3,7 +3,7 @@
 #include "private/HtmlDownLoadData.hpp"
 #include "private/HtmlDownLoadPrivateFunction.hpp"
 #include <QtCore/qcoreapplication.h>
-
+#include <QtCore/qdir.h>
 /*zone_namespace_begin*/
 template<>
 inline auto getThisData<zone_data::HtmlDownLoadData *,0>(const HtmlDownLoad * arg) ->zone_data::HtmlDownLoadData *{
@@ -43,9 +43,29 @@ HtmlDownLoadThread::HtmlDownLoadThread(){
 }
 
 void HtmlDownLoadThread::_p_downLoad(std::shared_ptr<HtmlDownLoadPack> argPack){
+
+    static const QString appDir=[]()->QString {
+        QString ans=qApp->applicationDirPath();
+        QDir dir{ ans };
+        dir.mkpath(ans+"/appCache");
+        return ans+"/appCache";
+    }();
+
     if(argPack){
         if(argPack->isNeedDownLoad()){
             const QUrl & varUrl=argPack->url();
+            
+            {/*尝试读取缓存*/
+                auto localFileName=varUrl.toString().toUtf8()
+                    .toBase64(QByteArray::Base64UrlEncoding);
+                QString localCacheName=appDir+"/"+localFileName+".html";
+                QFile file{localCacheName};
+                if (file.open(QIODevice::ReadOnly)) {
+                    QByteArray varAns=file.readAll();
+                    argPack->downLoadFinished(varAns,argPack);
+                    return;
+                }
+            }
 
             if (manager_==nullptr) {
                 manager_=new QNetworkAccessManager(this);
@@ -58,6 +78,16 @@ void HtmlDownLoadThread::_p_downLoad(std::shared_ptr<HtmlDownLoadPack> argPack){
                     varRep,[argPack,varRep]() {
                     varRep->deleteLater();
                     QByteArray varData=varRep->readAll();
+                    {/*写入缓存*/
+                        const QUrl & varUrl=argPack->url();
+                        auto localFileName=varUrl.toString().toUtf8()
+                            .toBase64(QByteArray::Base64UrlEncoding);
+                        QString localCacheName=appDir+"/"+localFileName+".html";
+                        QFile file{ localCacheName };
+                        if (file.open(QIODevice::WriteOnly)) {
+                            file.write(varData);
+                        }
+                    }
                     argPack->downLoadFinished(varData,argPack);
                 });
             }
@@ -99,9 +129,9 @@ std::shared_ptr<HtmlDownLoadThread> HtmlDownLoadThread::instance(){
                 new HtmlDownLoadThread,
                 [](HtmlDownLoadThread *arg){
         arg->quit();
-        arg->wait(123);
-        arg->terminate();
-        arg->deleteLater();
+        /*arg->wait(123);*/
+        /*arg->terminate();*/
+        /*arg->deleteLater();*/
     });
     qAddPostRoutine([](){
         auto varHtmlDownLoadThread=htmlDownLoadThread;

@@ -11,7 +11,7 @@
 #include "AbstractItemWidget.hpp"
 
 /*zone_namespace_begin*/
-
+class CentralWidget;
 namespace zone_data{
 class ItemWidgetData;
 }
@@ -20,7 +20,9 @@ class ItemWidget;
 template<typename _TYPE_TAG_,unsigned int _N_>
 auto getThisData(const ItemWidget *)->_TYPE_TAG_ ;
 
-class ItemWidget :public QWidget{
+class ItemWidget :
+        public QWidget
+        ,public AbstractItemWidget{
     Q_OBJECT
 
 protected:
@@ -29,10 +31,23 @@ protected:
     template<typename _TYPE_TAG_,unsigned int _N_>
     friend auto getThisData(const ItemWidget *)->_TYPE_TAG_ ;
 public:
-    explicit ItemWidget(decltype(nullptr)) {}
-    ItemWidget();
+     
+    explicit ItemWidget(QWidget* /**/=nullptr);
     ~ItemWidget();
+signals:
 
+public:
+    virtual void paint(const QStyleOptionViewItem &option,const QModelIndex &index)override;
+    virtual void setEditorData(const QModelIndex &index)override;
+    virtual void setModelData(QAbstractItemModel *model,const QModelIndex &index)override;
+    virtual QSize sizeHint(const QStyleOptionViewItem &option,const QModelIndex &index)override;
+    virtual void updateEditorGeometry(const QStyleOptionViewItem &option,const QModelIndex &index)override;
+    virtual bool isPaintOptionChanged(const QStyleOptionViewItem &,const QModelIndex &index)const override;
+    virtual void aboutToDelete()override;
+    virtual QRect geometry()const override;
+protected:
+    void paintEvent(QPaintEvent*)override;
+    void renderToImage(QImage & argImage);
 };
 
 /*zone_namespace_end*/

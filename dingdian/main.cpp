@@ -1,111 +1,54 @@
 ﻿#include "MainWindow.hpp"
 #include <QApplication>
-#include <NovelFile.hpp>
-#include <NovelLayout.hpp>
-#include <HtmlDownLoad.hpp>
-#include <QtCore/qurl.h>
-#include <QtCore/qdebug.h>
-#include <QtCore/qfile.h>
-#include <QTimer>
-#include "DingDianProcess.hpp"
 #include <stdexcept>
-static int test=0;
+#include <QtGui/qpainter.h>
+static void drawAndSaveHelp() {
+    QImage image{512,80,QImage::Format_RGBA8888};
+    image.fill(QColor(0,0,0,0));
+
+    QPainter painter(&image);
+
+    painter.setRenderHint(QPainter::HighQualityAntialiasing);
+    painter.setRenderHint(QPainter::TextAntialiasing);
+
+    {
+        auto font=painter.font();
+        font.setPixelSize(22);
+        painter.setFont(font);
+    }
+
+    painter.drawText(
+        20,
+        painter.fontMetrics().ascent(),
+        QString::fromUtf8(u8R"(
+默认:http://www.23wx.com/html/18/18191/
+)"));
+
+    painter.drawText(
+        20,
+        50+painter.fontMetrics().ascent(),
+        QString::fromUtf8(u8R"(
+dingdian http://www.23wx.com/html/18/18191/
+)"));
+
+    image.save(qApp->applicationDirPath()+"/help.png");
+}
 
 int main(int argc,char *argv[]) try{
     QApplication app(argc,argv);
 
+    drawAndSaveHelp();
+
     MainWindow window;
-    {
-        auto file=std::make_shared<NovelFile>();
-        file->setFile(R"(D:\opencv_project_test\b.txt)");
-        auto layout=std::make_shared<NovelLayout>();
-
-        window.setNovelLayout(layout);
-        layout->setNovelFile(file);
-        window.show();
-        auto font=layout->font();
-        font.setPixelSize(26);
-        layout->setFont(font);
-        layout->setNeedLayout(true);
+    if (argc>1) {
+        window.setMainPage(QString::fromUtf8(argv[1]));
     }
-
-    HtmlDownLoad downLoad1;
-    downLoad1.connect(&downLoad1,&HtmlDownLoad::downLoadFinished,
-        [](QByteArray arg,auto) {
-            {
-                QFile file("xxx1.txt");
-                file.open(QIODevice::WriteOnly);
-                file.write(arg);
-            }
-
-            DingDianProcess process;
-            process.processAPage(arg);
-
-    });
-    downLoad1.download(QUrl("http://m.23wx.com/html/18/18191/25448822.html"));
-
-
-/*
-    HtmlDownLoad downLoad;
-    downLoad.connect(&downLoad,&HtmlDownLoad::downLoadFinished,
-        [](QByteArray arg,auto) {
-            {
-                QFile file(QString("xxx%1.txt")
-                    .arg(test++,6,10,QChar('0'))
-                );
-                file.open(QIODevice::WriteOnly);
-                file.write(arg);
-            }
-
-            DingDianProcess process;
-            process.setMainPage(arg);
-            auto mainPage= process.processMainPage();
-             
-            QTimer * timer=new QTimer;
-            typedef void(QTimer::*T)();
-
-            class Pack {
-            public:
-                DingDianProcess::MainPage page;
-                QVector<DingDianProcess::MainPage::Item>::iterator pos;
-                HtmlDownLoad downLoad;
-                Pack() {
-                    downLoad.connect(&downLoad,&HtmlDownLoad::downLoadFinished,
-                        [](QByteArray arg,auto) {
-                           
-                            DingDianProcess process;
-                            auto xw=process.processAPage(arg);
-
-                            {
-                                QFile file(QString("xxx%1.txt")
-                                    .arg(test++,6,10,QChar('0'))
-                                );
-                                file.open(QIODevice::WriteOnly);
-                                for (auto &i:xw) { 
-                                    file.write(i.toUtf8()+"\n");
-                                }
-                            }
-
-                    });
-                }
-            };
-            auto pack=std::make_shared<Pack>();
-            pack->page=mainPage;
-            pack->pos=pack->page.items.begin();
-            timer->connect(timer,T(&QTimer::timeout),
-                [pack,timer]() {
-                if (pack->pos!=pack->page.items.end()) {
-                    QUrl url(pack->pos->url);
-                    pack->downLoad.download(url);              
-                    ++(pack->pos);
-                }
-            });
-            timer->start(100);
-    });
-    downLoad.download(QUrl("http://www.23wx.com/html/18/18191/"));*/
-
+    else {
+        window.setMainPage(
+            QString::fromUtf8(u8R"(http://www.23wx.com/html/18/18191/)"));
+    }
+    window.show();
    
-
     return app.exec();
 }
 catch (const std::exception&e) {
