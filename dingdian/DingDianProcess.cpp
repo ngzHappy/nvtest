@@ -124,10 +124,10 @@ void processMainPage(
         const QByteArray html;
         _GumboParser(const QByteArray & var_html):html(var_html) {
             parser=gumbo_parse_with_options(
-                &kGumboDefaultOptions,
+                fkGumboDefaultOptions(),
                 html.data(),html.size());
         }
-        ~_GumboParser() { gumbo_destroy_output(&kGumboDefaultOptions,parser); }
+        ~_GumboParser() { gumbo_destroy_output(fkGumboDefaultOptions(),parser); }
     };
     std::shared_ptr<GumboOutput> parser;
     {
@@ -316,10 +316,10 @@ std::list<QString> DingDianProcess::processAPage(const QByteArray&argHtml)const 
         const QByteArray html;
         _GumboParser(const QByteArray & var_html):html(var_html) {
             parser=gumbo_parse_with_options(
-                &kGumboDefaultOptions,
+                fkGumboDefaultOptions(),
                 html.data(),html.size());
         }
-        ~_GumboParser() { gumbo_destroy_output(&kGumboDefaultOptions,parser); }
+        ~_GumboParser() { gumbo_destroy_output(fkGumboDefaultOptions(),parser); }
     };
     std::shared_ptr<GumboOutput> parser;
     {

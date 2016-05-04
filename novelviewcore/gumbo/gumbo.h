@@ -624,7 +624,8 @@ typedef struct GumboInternalOptions {
 } GumboOptions;
 
 /** Default options struct; use this with gumbo_parse_with_options. */
-GUMBO_EXPORT_IMPORT const GumboOptions kGumboDefaultOptions;
+extern const GumboOptions kGumboDefaultOptions;
+GUMBO_EXPORT_IMPORT  const GumboOptions* fkGumboDefaultOptions();
 
 /** The output struct containing the results of the parse. */
 typedef struct GumboInternalOutput {

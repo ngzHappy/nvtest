@@ -61,6 +61,7 @@ static void free_wrapper(void* unused, void* ptr) { free(ptr); }
 
 const GumboOptions kGumboDefaultOptions = {&malloc_wrapper, &free_wrapper, NULL,
     8, false, -1, GUMBO_TAG_LAST, GUMBO_NAMESPACE_HTML};
+const GumboOptions* fkGumboDefaultOptions(){return &kGumboDefaultOptions;}
 
 static const GumboStringPiece kDoctypeHtml = GUMBO_STRING("html");
 static const GumboStringPiece kPublicIdHtml4_0 =
@@ -575,7 +576,7 @@ static GumboInsertionMode get_appropriate_insertion_mode(
   if (node->v.element.tag_namespace != GUMBO_NAMESPACE_HTML)
     return is_last ?
       GUMBO_INSERTION_MODE_IN_BODY : GUMBO_INSERTION_MODE_INITIAL;
-  
+
   switch (node->v.element.tag) {
     case GUMBO_TAG_SELECT: {
       if (is_last) {
