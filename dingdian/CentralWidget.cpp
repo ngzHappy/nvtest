@@ -8,11 +8,11 @@
 /*zone_namespace_begin*/
 template<>
 inline auto getThisData<zone_data::CentralWidgetData *,0>(const CentralWidget * arg) ->zone_data::CentralWidgetData *{
-    return const_cast<CentralWidget *>(arg)->thisData_.get(); 
+    return const_cast<CentralWidget *>(arg)->thisData_.get();
 }
 
 template<>
-inline auto getThisData<const zone_data::CentralWidgetData *,1>(const CentralWidget * arg) ->const zone_data::CentralWidgetData *{ 
+inline auto getThisData<const zone_data::CentralWidgetData *,1>(const CentralWidget * arg) ->const zone_data::CentralWidgetData *{
     return arg->thisData_.get();
 }
 
@@ -43,6 +43,12 @@ namespace zone_private_function {
 CentralWidget::CentralWidget():thisData_(ThisDataType(
                          new zone_data::CentralWidgetData,
                          [](zone_data::CentralWidgetData *arg){delete arg;})) {
+    this->setOrientation(Qt::Horizontal);
+    zone_this_data(this);
+    var_this_data->listView=new ListView;
+    this->addWidget(var_this_data->listView);
+    var_this_data->novelWidget=new NovelWidget;
+    this->addWidget(var_this_data->novelWidget);
 }
 
 CentralWidget::~CentralWidget() {
@@ -58,6 +64,7 @@ void CentralWidget::_p_setNovelLayout(_t_NOVELLAYOUT_t__ &&_novelLayout_){
     zone_this_data(this);
     var_this_data->novelLayout=
         std::forward<_t_NOVELLAYOUT_t__>(_novelLayout_);
+    var_this_data->novelWidget->setNovelLayout(var_this_data->novelLayout);
 }
 
 void CentralWidget::setNovelLayout(const std::shared_ptr<NovelLayout>&_novelLayout_){

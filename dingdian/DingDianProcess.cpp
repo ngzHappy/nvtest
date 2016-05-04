@@ -213,6 +213,7 @@ void processMainPage(
         std::list<GumboNode *> nodes;
         nodes.push_back(tableNode);
 
+        varAns.items.reserve(1024*3);
         while (nodes.empty()==false) {
             GumboNode * rootNode=nodes.front(); nodes.pop_front();
             if (rootNode->type!=GumboNodeType::GUMBO_NODE_ELEMENT) {

@@ -9,7 +9,7 @@
 #include <list>
 #include <QtWidgets/qwidget.h>
 #include <QtCore/qpointer.h>
-#include "AbstractItemWidget.hpp"
+#include "../AbstractItemWidget.hpp"
 
 /*zone_namespace_begin*/
 class ListView;

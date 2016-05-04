@@ -3,8 +3,8 @@
 #define ____PRAGMA_ONCE_HPP_DATA_CENTRALWIDGET_0__0x00() 1
 
 #include <memory>
-#include <QtWidgets/qsplitter.h>
 #include <QtWidgets/qwidget.h>
+#include "../ListView.hpp"
 class NovelLayout;
 class NovelFile;
 class NovelWidget;
@@ -18,8 +18,8 @@ public:
     ~CentralWidgetData();
 
     std::shared_ptr<NovelLayout> novelLayout;
-    QSplitter * splitter=nullptr;
     NovelWidget * novelWidget=nullptr;
+    ListView * listView=nullptr;
 };
 
 }

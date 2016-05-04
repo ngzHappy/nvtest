@@ -10,7 +10,8 @@
 #include <type_traits>
 #include <QtCore/QByteArray>
 #include <QtCore/QString>
-#include <QList>
+#include <QtCore/QVector>
+ 
 /*zone_namespace_begin*/
 
 namespace zone_data {
@@ -40,7 +41,7 @@ public:
             QString title;
             QString url;
         };
-        QList<Item> items;
+        QVector<Item> items;
         QString title;
     };
 

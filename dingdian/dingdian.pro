@@ -22,19 +22,27 @@ LIBS+=-L$$OUTPWD -lnovelviewcore
 }
 
 
-HEADERS +=$$PWD/DingDianProcess.hpp \
-    CentralWidget.hpp \
-    private/CentralWidgetData.hpp \
-    private/CentralWidgetPrivateFunction.hpp \
-    AbstractItemWidget.hpp \
-    ListView.hpp \
-    private/ListViewData.hpp \
-    private/ListViewPrivateFunction.hpp
+HEADERS +=$$PWD/DingDianProcess.hpp
+HEADERS +=$$PWD/ItemWidget.hpp
+HEADERS +=$$PWD/private/ItemWidgetData.hpp
+HEADERS +=$$PWD/private/ItemWidgetPrivateFunction.hpp
+HEADERS +=$$PWD/private/DingDianModelData.hpp
+HEADERS +=$$PWD/private/DingDianModelPrivateFunction.hpp
+HEADERS +=$$PWD/DingDianModel.hpp
+HEADERS +=$$PWD/CentralWidget.hpp
+HEADERS +=$$PWD/private/CentralWidgetData.hpp
+HEADERS +=$$PWD/private/CentralWidgetPrivateFunction.hpp
+HEADERS +=$$PWD/AbstractItemWidget.hpp
+HEADERS +=$$PWD/ListView.hpp
+HEADERS +=$$PWD/private/ListViewData.hpp
+HEADERS +=$$PWD/private/ListViewPrivateFunction.hpp
 HEADERS +=$$PWD/private/DingDianProcessData.hpp
 HEADERS +=$$PWD/private/DingDianProcessPrivateFunction.hpp
-SOURCES +=$$PWD/DingDianProcess.cpp \
-    CentralWidget.cpp \
-    ListView.cpp
+SOURCES +=$$PWD/DingDianProcess.cpp
+SOURCES +=$$PWD/ItemWidget.cpp
+SOURCES +=$$PWD/DingDianModel.cpp
+SOURCES +=$$PWD/CentralWidget.cpp
+SOURCES +=$$PWD/ListView.cpp
 
 SOURCES += main.cpp\
         MainWindow.cpp

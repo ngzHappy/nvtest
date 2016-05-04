@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <utility>
 #include <type_traits>
-#include <QtWidgets/qwidget.h>
+#include <QtWidgets/qsplitter.h>
 
 /*zone_namespace_begin*/
 
@@ -22,7 +22,7 @@ class NovelWidget;
 template<typename _TYPE_TAG_,unsigned int _N_>
 auto getThisData(const CentralWidget *)->_TYPE_TAG_ ;
 
-class CentralWidget :public QWidget{
+class CentralWidget :public QSplitter{
     Q_OBJECT
 
 protected:
