@@ -23,14 +23,16 @@ class HtmlDownLoadPack : public QObject{
 private:
     QUrl url_;
     std::atomic<bool> isNeedDownLoad_;
+    const bool isCacheDownLoad_;
 public:
-    HtmlDownLoadPack(HtmlDownLoad *,const QUrl &);
+    HtmlDownLoadPack(HtmlDownLoad *,const QUrl &,bool/*isCacheDownLoad*/=false);
 
     bool isNeedDownLoad()const{return isNeedDownLoad_.load();}
     const QUrl & url()const{return url_;}
-
+    bool isCacheDownLoad() const { return isCacheDownLoad_; }
 signals:
     void downLoadFinished(QByteArray,std::shared_ptr<HtmlDownLoadPack>);
+    void cacheDownLoadFinished(std::shared_ptr<HtmlDownLoadPack>);
 };
 
 class HtmlDownLoadThread :public QThread{

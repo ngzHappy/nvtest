@@ -3,6 +3,8 @@
 #define ____PRAGMA_ONCE_HPP_DATA_CENTRALWIDGET_0__0x00() 1
 
 #include <memory>
+#include <cstddef>
+#include <cstdint>
 #include <QtWidgets/qwidget.h>
 #include "../ListView.hpp"
 #include <HtmlDownLoad.hpp>
@@ -23,6 +25,8 @@ public:
     ListView * listView=nullptr;
     DingDianProcess::MainPage mainPage;
     std::shared_ptr<HtmlDownLoad> pageHtmlDownLoad;
+    std::shared_ptr<HtmlDownLoad> cacheHtmlDownLoad;
+    std::int32_t currentPreDownloadID=0;
 };
 
 }

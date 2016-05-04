@@ -146,7 +146,31 @@ void CentralWidget::_p_setMainPage(_t_MAINPAGE_t__ &&_mainPage_) {
         qobject_cast<DingDianModel*>(var_this_data->listView->model());
     varModel->setMainPage(var_this_data->mainPage);
     auto varListView=var_this_data->listView;
+    var_this_data->cacheHtmlDownLoad.reset();
     varListView->setCurrentIndex(varModel->index(0,0));
+    var_this_data->currentPreDownloadID=0;
+    var_this_data->cacheHtmlDownLoad
+        =std::make_shared<HtmlDownLoad>();
+    connect(var_this_data->cacheHtmlDownLoad.get(),
+        &HtmlDownLoad::cacheDownLoadFinished,
+        this,
+        [var_this_data](auto) {
+        if (var_this_data->cacheHtmlDownLoad) {
+            if (var_this_data->mainPage.items.empty()==false) {
+                ++(var_this_data->currentPreDownloadID);
+                if (var_this_data->mainPage.items.size()>(var_this_data->currentPreDownloadID)) {
+                    var_this_data->cacheHtmlDownLoad->cacheDownLoad(
+                        var_this_data->mainPage.items[(var_this_data->currentPreDownloadID)]
+                        .url
+                    );
+                }
+            }
+        }
+    });
+    if (var_this_data->mainPage.items.empty()) { return; }
+    var_this_data->cacheHtmlDownLoad->cacheDownLoad(
+        var_this_data->mainPage.items[0].url
+    );
 }
 
 void CentralWidget::setMainPage(const DingDianProcess::MainPage&_mainPage_) {

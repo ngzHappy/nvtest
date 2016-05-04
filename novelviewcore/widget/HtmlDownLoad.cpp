@@ -43,24 +43,19 @@ HtmlDownLoadThread::HtmlDownLoadThread(){
 }
 
 void HtmlDownLoadThread::_p_downLoad(std::shared_ptr<HtmlDownLoadPack> argPack){
-
-    static const QString appDir=[]()->QString {
-        QString ans=qApp->applicationDirPath();
-        QDir dir{ ans };
-        dir.mkpath(ans+"/appCache");
-        return ans+"/appCache";
-    }();
-
+     
     if(argPack){
         if(argPack->isNeedDownLoad()){
             const QUrl & varUrl=argPack->url();
             
             {/*尝试读取缓存*/
-                auto localFileName=varUrl.toString().toUtf8()
-                    .toBase64(QByteArray::Base64UrlEncoding);
-                QString localCacheName=appDir+"/"+localFileName+".html";
+                const QString localCacheName=HtmlDownLoad::url2LocalCacheFileName(varUrl);
                 QFile file{localCacheName};
                 if (file.open(QIODevice::ReadOnly)) {
+                    if (argPack->isCacheDownLoad()) { 
+                        argPack->cacheDownLoadFinished(argPack);
+                        return; 
+                    }
                     QByteArray varAns=file.readAll();
                     argPack->downLoadFinished(varAns,argPack);
                     return;
@@ -80,13 +75,15 @@ void HtmlDownLoadThread::_p_downLoad(std::shared_ptr<HtmlDownLoadPack> argPack){
                     QByteArray varData=varRep->readAll();
                     {/*写入缓存*/
                         const QUrl & varUrl=argPack->url();
-                        auto localFileName=varUrl.toString().toUtf8()
-                            .toBase64(QByteArray::Base64UrlEncoding);
-                        QString localCacheName=appDir+"/"+localFileName+".html";
+                        const QString localCacheName=HtmlDownLoad::url2LocalCacheFileName(varUrl);
                         QFile file{ localCacheName };
                         if (file.open(QIODevice::WriteOnly)) {
                             file.write(varData);
                         }
+                    }
+                    if (argPack->isCacheDownLoad()) { 
+                        argPack->cacheDownLoadFinished(argPack);
+                        return; 
                     }
                     argPack->downLoadFinished(varData,argPack);
                 });
@@ -96,7 +93,10 @@ void HtmlDownLoadThread::_p_downLoad(std::shared_ptr<HtmlDownLoadPack> argPack){
     }
 }
 
-HtmlDownLoadPack::HtmlDownLoadPack(HtmlDownLoad * argTarget,const QUrl & argUrl){
+HtmlDownLoadPack::HtmlDownLoadPack(
+    HtmlDownLoad * argTarget,
+    const QUrl & argUrl,
+    bool arg_isc):isCacheDownLoad_(arg_isc){
     url_=argUrl;
     if(argTarget){
         isNeedDownLoad_=true;
@@ -105,6 +105,9 @@ HtmlDownLoadPack::HtmlDownLoadPack(HtmlDownLoad * argTarget,const QUrl & argUrl)
         connect(argTarget,&HtmlDownLoad::destroyed,
                 this,[this](QObject*){
             isNeedDownLoad_=false;},Qt::QueuedConnection);
+        connect(this,&HtmlDownLoadPack::cacheDownLoadFinished,
+            argTarget,&HtmlDownLoad::cacheDownLoadFinished,
+            Qt::QueuedConnection);
     }
 }
 
@@ -161,11 +164,28 @@ HtmlDownLoad::HtmlDownLoad():thisData_(ThisDataType(
         auto varPack=std::make_shared<zone_data::HtmlDownLoadPack>(this,arg);
         varDownLoadThread->downLoad(varPack);
     });
+    connect(this,&HtmlDownLoad::cacheDownLoad,
+        this,[this](const QUrl & arg) {
+        auto varDownLoadThread=zone_data::HtmlDownLoadThread::instance();
+        auto varPack=std::make_shared<zone_data::HtmlDownLoadPack>(this,arg,true);
+        varDownLoadThread->downLoad(varPack);
+    });
 }
 
 HtmlDownLoad::~HtmlDownLoad() {
 }
 
+QString HtmlDownLoad::url2LocalCacheFileName(const QUrl &varUrl) {
+    static const QString appDir=[]()->QString {
+        QString ans=qApp->applicationDirPath();
+        QDir dir{ ans };
+        dir.mkpath(ans+"/appCache");
+        return ans+"/appCache";
+    }();
+    const auto localFileName=varUrl.toString().toUtf8()
+        .toBase64(QByteArray::Base64UrlEncoding);
+    return appDir+"/"+localFileName+".html";
+}
 
 /*zone_namespace_end*/
 

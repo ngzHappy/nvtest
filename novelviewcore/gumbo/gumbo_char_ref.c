@@ -23,7 +23,7 @@
 //
 // The generated source is also checked into source control so that most people
 // hacking on the parser do not need to install ragel.
-
+#include "gumbo_strings.h"
 #include "char_ref.h"
 
 #include <assert.h>

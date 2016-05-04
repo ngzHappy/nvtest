@@ -37,9 +37,12 @@ public:
     HtmlDownLoad();
     ~HtmlDownLoad();
 
+    static QString url2LocalCacheFileName(const QUrl &);
 signals:
+    void cacheDownLoad(const QUrl &);
     void download(const QUrl &);
     void downLoadFinished(QByteArray,std::shared_ptr<zone_data::HtmlDownLoadPack>);
+    void cacheDownLoadFinished(std::shared_ptr<zone_data::HtmlDownLoadPack>);
 };
 
 /*zone_namespace_end*/
