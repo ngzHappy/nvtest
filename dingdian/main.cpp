@@ -3,7 +3,9 @@
 #include <stdexcept>
 #include <QtGui/qpainter.h>
 #include <QtCore/qfile.h>
-#include <QtGui/QDesktopServices> 
+#include <QtGui/QDesktopServices>
+#include <QtCore/qurl.h>
+
 static void drawAndSaveHelp() {
 
     {
@@ -69,7 +71,7 @@ int main(int argc,char *argv[]) try{
             QString::fromUtf8(u8R"(http://www.23wx.com/html/18/18191/)"));
     }
     window.show();
-   
+
     return app.exec();
 }
 catch (const std::exception&e) {
