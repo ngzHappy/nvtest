@@ -91,10 +91,11 @@ void NovelWidget::nextPage() {
     if (var_this_data->layout) {
         auto varMax=std::max<std::int32_t>(0,
             var_this_data->layout->pagesCount()-1);
-        ++var_this_data->currentPage;
-        var_this_data->currentPage=std::min(
-            var_this_data->currentPage,
-            varMax);
+        ++(var_this_data->currentPage);
+        if (var_this_data->currentPage>varMax) {
+            var_this_data->currentPage=varMax;
+            nextPageEndl();
+        }
     }
     update();
 }
@@ -107,8 +108,11 @@ void NovelWidget::firstPage() {
 
 void NovelWidget::previousPage() {
     zone_this_data(this);
-    var_this_data->currentPage=std::max(0,
-        var_this_data->currentPage-1);
+    --(var_this_data->currentPage);
+    if (var_this_data->currentPage<0) {
+        var_this_data->currentPage=0;
+        previousPageEndl();
+    }
     update();
 }
 

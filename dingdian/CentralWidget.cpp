@@ -82,7 +82,8 @@ CentralWidget::CentralWidget():thisData_(ThisDataType(
     {
         auto varNovelLayout=std::make_shared<NovelLayout>();
         auto varFont=varNovelLayout->font();
-        varFont.setPixelSize(26);
+        varFont.setPixelSize(30);
+        varFont.setWeight(QFont::Medium);
         varNovelLayout->setFont(varFont);
         var_this_data->novelWidget->setNovelLayout(varNovelLayout);
     }
@@ -91,6 +92,21 @@ CentralWidget::CentralWidget():thisData_(ThisDataType(
     connect(
         var_this_data->listView,&ListView::onCurrentChanged,
         this,&CentralWidget::onCurrentChanged);
+
+    connect(
+        var_this_data->novelWidget,
+        &NovelWidget::nextPageEndl,
+        this,[var_this_data]() {
+        var_this_data->novelWidget->onKeyPressed(Qt::Key_Down);
+    });
+
+    connect(
+        var_this_data->novelWidget,
+        &NovelWidget::previousPageEndl,
+        this,[var_this_data]() {
+        var_this_data->novelWidget->onKeyPressed(Qt::Key_Up);
+    });
+
     connect(
         var_this_data->novelWidget,
         &NovelWidget::onKeyPressed,

@@ -1,7 +1,4 @@
 CONFIG += c++14
-win32-msvc*{
-CONFIG += console
-}
 
 QT += core gui
 QT += widgets
@@ -16,6 +13,9 @@ include( $$PWD/../novelviewcore/boost/boost.pri )
 INCLUDEPATH += $$PWD/../novelviewcore/widget
 
 CONFIG(debug,debug|release){
+win32-msvc*{
+CONFIG += console
+}
 LIBS+=-L$$OUTPWD -lnovelviewcored
 }else{
 LIBS+=-L$$OUTPWD -lnovelviewcore

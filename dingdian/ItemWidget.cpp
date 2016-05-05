@@ -175,13 +175,19 @@ void ItemWidget::renderToImage(QImage & argImage) {
         path.lineTo(width()-1,height()-1);
         path.lineTo(1,height()-1);
         path.closeSubpath();
-        painter.setBrush(QColor(10,70,205,100));
-        painter.setPen(QPen(QColor(10,70,205,100),2));
+        painter.setBrush(QColor(255,70,85,150));
+        painter.setPen(QPen(QColor(10,70,75,180),2));
         painter.drawPath(path);
     }
 
-    painter.setPen(QPen(QColor(25,25,25,190),2));
-    painter.setBrush(QColor(0,0,0));
+    if (lastStyleOptionViewItem_.state&QStyle::State_MouseOver) {
+        painter.setPen(QPen(QColor(50,85,75,222),2));
+        painter.setBrush(QColor(0,0,0));
+    }
+    else {
+        painter.setPen(QPen(QColor(250,185,175,222),2));
+        painter.setBrush(QColor(0,0,0));
+    }
 
     {
         QFont font=painter.font();

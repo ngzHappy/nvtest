@@ -20,8 +20,6 @@ static void drawAndSaveHelp() {
         }
     }
 
-    QDesktopServices::openUrl(QString("http://www.23wx.com/"));
-
     {
         QImage image{ 512,80,QImage::Format_RGBA8888 };
         image.fill(QColor(0,0,0,0));
@@ -62,11 +60,20 @@ int main(int argc,char *argv[]) try{
     drawAndSaveHelp();
 
     MainWindow window;
-    window.setStyleSheet(u8R"(MainWindow{background:darkgray;})");
+    window.setStyleSheet(u8R"(MainWindow{
+background:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+stop: 0 rgb(173,155,52), 
+stop: 0.4 rgb(170,146,60),
+stop: 0.8 rgb(168,150,55), 
+stop: 1.0 rgb(171,146,53));
+}
+
+)");
     if (argc>1) {
         window.setMainPage(QString::fromUtf8(argv[1]));
     }
     else {
+        QDesktopServices::openUrl(QString("http://www.23wx.com/"));
         window.setMainPage(
             QString::fromUtf8(u8R"(http://www.23wx.com/html/18/18191/)"));
     }
