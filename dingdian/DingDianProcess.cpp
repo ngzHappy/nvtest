@@ -265,7 +265,7 @@ void DingDianProcess::_p_setMainPage(_t_MAINPAGE_t__ &&_mainPage_) {
     QByteArray varMainPage=std::forward<_t_MAINPAGE_t__>(_mainPage_);
     do {
         QTextCodec * varGBKCodeC=QTextCodec::codecForHtml(varMainPage);
-        if (varGBKCodeC==QTextCodec::codecForName("utf8")) { break; }
+        if (varGBKCodeC==QTextCodec::codecForName("UTF-8")) { break; }
         if (varGBKCodeC) {
             QString varMainPageUtf16=varGBKCodeC->toUnicode(varMainPage);
             varMainPage=varMainPageUtf16.toUtf8();
@@ -301,7 +301,7 @@ std::list<QString> DingDianProcess::processAPage(const QByteArray&argHtml)const 
     do {
         /*转到utf8编码*/
         QTextCodec * varGBKCodeC=QTextCodec::codecForHtml(varHtml);
-        if (varGBKCodeC==QTextCodec::codecForName("utf8")) { break; }
+        if (varGBKCodeC==QTextCodec::codecForName("UTF-8")) { break; }
         if (varGBKCodeC) {
             QString varMainPageUtf16=varGBKCodeC->toUnicode(varHtml);
             varHtml=varMainPageUtf16.toUtf8();
