@@ -18,7 +18,7 @@ class CentralWidget;
 class NovelLayout;
 class NovelFile;
 class NovelWidget;
- 
+
 template<typename _TYPE_TAG_,unsigned int _N_>
 auto getThisData(const CentralWidget *)->_TYPE_TAG_ ;
 
@@ -34,13 +34,15 @@ public:
     explicit CentralWidget(decltype(nullptr)) {}
     CentralWidget();
     ~CentralWidget();
+signals:
 
+    void titleChanged(QString);
 public:
     void setMainPage(const DingDianProcess::MainPage& /*mainPage*/);
     void setMainPage(DingDianProcess::MainPage&& /*mainPage*/);
     const DingDianProcess::MainPage & getMainPage() const;
     const DingDianProcess::MainPage & mainPage() const{ return getMainPage();}
-private: 
+private:
     template<typename _t_MAINPAGE_t__>
     void _p_setMainPage(_t_MAINPAGE_t__ && /*mainPage*/);
 public:
@@ -48,7 +50,7 @@ public:
     void setNovelLayout(std::shared_ptr<NovelLayout>&& /*novelLayout*/);
     const std::shared_ptr<NovelLayout> & getNovelLayout() const;
     const std::shared_ptr<NovelLayout> & novelLayout() const{ return getNovelLayout();}
-private: 
+private:
     template<typename _t_NOVELLAYOUT_t__>
     void _p_setNovelLayout(_t_NOVELLAYOUT_t__ && /*novelLayout*/);
 private slots:

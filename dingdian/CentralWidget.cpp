@@ -211,6 +211,7 @@ void CentralWidget::onCurrentChanged() {
     if (varCurrentIndex.isValid()) {
         var_this_data->pageHtmlDownLoad.reset();
         QString varUrl=varCurrentIndex.data(Qt::ToolTipRole).value<QString>();
+        QString varTitle=varCurrentIndex.data(Qt::DisplayRole).value<QString>();
         if (varUrl.isEmpty()==false) {
             var_this_data->pageHtmlDownLoad=
                 std::make_shared<HtmlDownLoad>();
@@ -218,7 +219,7 @@ void CentralWidget::onCurrentChanged() {
                 var_this_data->pageHtmlDownLoad.get(),
                 &HtmlDownLoad::downLoadFinished,
                 this,
-                [var_this_data](QByteArray argHtml,auto) {
+                [this,var_this_data,varTitle](QByteArray argHtml,auto) {
                 DingDianProcess varProcess;
                 auto varPage=varProcess.processAPage(argHtml);
                 auto novelFile=std::make_shared<NovelFile>();
@@ -228,6 +229,7 @@ void CentralWidget::onCurrentChanged() {
                 var_this_data->novelWidget->firstPage();
                 var_this_data->novelWidget->novelLayout()
                     ->setNeedLayout(true);
+                this->titleChanged(varTitle);
             });
             var_this_data->pageHtmlDownLoad->download(QUrl(varUrl));
         }

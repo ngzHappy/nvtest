@@ -52,6 +52,10 @@ MainWindow::MainWindow():
     setCentralWidget(var_this_data->novelWidget);
     this->setMinimumHeight(600);
     this->setMinimumWidth(800);
+    connect(var_this_data->novelWidget,
+            &CentralWidget::titleChanged,
+            this,
+            [this](QString var){this->setWindowTitle(var);});
 }
 
 MainWindow::~MainWindow() {
