@@ -53,8 +53,9 @@ public:
 private:
     template<typename _t_NOVELLAYOUT_t__>
     void _p_setNovelLayout(_t_NOVELLAYOUT_t__ && /*novelLayout*/);
+
 private slots:
-    void onCurrentChanged();
+    void onCurrentChanged(bool=false);
 };
 
 /*zone_namespace_end*/

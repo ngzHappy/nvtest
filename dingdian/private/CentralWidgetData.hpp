@@ -27,6 +27,7 @@ public:
     std::shared_ptr<HtmlDownLoad> pageHtmlDownLoad;
     std::shared_ptr<HtmlDownLoad> cacheHtmlDownLoad;
     std::int32_t currentPreDownloadID=0;
+    bool showLastPage=false;
 };
 
 }

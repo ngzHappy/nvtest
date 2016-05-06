@@ -90,8 +90,14 @@ CentralWidget::CentralWidget():thisData_(ThisDataType(
 
 
     connect(
-        var_this_data->listView,&ListView::onCurrentChanged,
-        this,&CentralWidget::onCurrentChanged);
+        var_this_data->listView,
+        &ListView::onCurrentChanged,
+        this,
+        [this]() {
+        zone_this_data(this);
+        this->onCurrentChanged(var_this_data->showLastPage);
+        var_this_data->showLastPage=false;
+    });
 
     connect(
         var_this_data->novelWidget,
@@ -104,6 +110,7 @@ CentralWidget::CentralWidget():thisData_(ThisDataType(
         var_this_data->novelWidget,
         &NovelWidget::previousPageEndl,
         this,[var_this_data]() {
+        var_this_data->showLastPage=true;
         var_this_data->novelWidget->onKeyPressed(Qt::Key_Up);
     });
 
@@ -205,7 +212,7 @@ void CentralWidget::setNovelLayout(std::shared_ptr<NovelLayout>&&_novelLayout_) 
     _p_setNovelLayout(std::move(_novelLayout_));
 }
 
-void CentralWidget::onCurrentChanged() {
+void CentralWidget::onCurrentChanged(bool arg) {
     zone_this_data(this);
     QModelIndex varCurrentIndex=var_this_data->listView->currentIndex();
     if (varCurrentIndex.isValid()) {
@@ -219,14 +226,19 @@ void CentralWidget::onCurrentChanged() {
                 var_this_data->pageHtmlDownLoad.get(),
                 &HtmlDownLoad::downLoadFinished,
                 this,
-                [this,var_this_data,varTitle](QByteArray argHtml,auto) {
+                [this,var_this_data,varTitle,arg](QByteArray argHtml,auto) {
                 DingDianProcess varProcess;
                 auto varPage=varProcess.processAPage(argHtml);
                 auto novelFile=std::make_shared<NovelFile>();
                 novelFile->setParagraphs(std::move(varPage));
                 var_this_data->novelWidget->novelLayout()
                     ->setNovelFile(std::move(novelFile));
-                var_this_data->novelWidget->firstPage();
+                if (arg) {
+                    var_this_data->novelWidget->lastPage();
+                }
+                else {
+                    var_this_data->novelWidget->firstPage();
+                }
                 var_this_data->novelWidget->novelLayout()
                     ->setNeedLayout(true);
                 this->titleChanged(varTitle);
