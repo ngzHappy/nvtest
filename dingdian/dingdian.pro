@@ -23,6 +23,12 @@ LIBS+=-L$$OUTPWD -lnovelviewcore
 
 
 HEADERS +=$$PWD/DingDianProcess.hpp
+HEADERS +=$$PWD/LuaPreBuild.hpp
+HEADERS +=$$PWD/private/LuaPreBuildData.hpp
+HEADERS +=$$PWD/private/LuaPreBuildPrivateFunction.hpp
+HEADERS +=$$PWD/private/DingDianSytleData.hpp
+HEADERS +=$$PWD/private/DingDianSytlePrivateFunction.hpp
+HEADERS +=$$PWD/DingDianSytle.hpp
 HEADERS +=$$PWD/ItemWidget.hpp
 HEADERS +=$$PWD/private/ItemWidgetData.hpp
 HEADERS +=$$PWD/private/ItemWidgetPrivateFunction.hpp
@@ -39,6 +45,8 @@ HEADERS +=$$PWD/private/ListViewPrivateFunction.hpp
 HEADERS +=$$PWD/private/DingDianProcessData.hpp
 HEADERS +=$$PWD/private/DingDianProcessPrivateFunction.hpp
 SOURCES +=$$PWD/DingDianProcess.cpp
+SOURCES +=$$PWD/LuaPreBuild.cpp
+SOURCES +=$$PWD/DingDianSytle.cpp
 SOURCES +=$$PWD/ItemWidget.cpp
 SOURCES +=$$PWD/DingDianModel.cpp
 SOURCES +=$$PWD/CentralWidget.cpp

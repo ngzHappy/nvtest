@@ -5,7 +5,7 @@
 #include <QtCore/qfile.h>
 #include <QtGui/QDesktopServices>
 #include <QtCore/qurl.h>
-
+#include "DingDianSytle.hpp"
 static void drawAndSaveHelp() {
 
     {
@@ -78,6 +78,8 @@ stop: 1.0 rgb(171,146,53));
             QString::fromUtf8(u8R"(http://www.23wx.com/html/18/18191/)"));
     }
     window.show();
+
+    DingDianSytle::instance();
 
     return app.exec();
 }
