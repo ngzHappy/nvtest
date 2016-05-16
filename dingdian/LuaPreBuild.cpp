@@ -73,6 +73,7 @@ void LuaPreBuild::build(Item&arg) {
         std::cout<<e.what()<<std::endl;
         std::cout.flush();
 #endif
+        throw e;
     }
 }
 
