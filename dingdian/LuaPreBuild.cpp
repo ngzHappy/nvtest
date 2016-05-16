@@ -88,6 +88,22 @@ public:
 };
 }
 
+int LuaPreBuild::call(lua_State*L,const Item&arg,int argSize) {
+    enum { Error_Code=-1999 };
+    if (L==nullptr) { return Error_Code; }
+    if (bool(arg.bin)==false) {
+        return Error_Code;
+    }
+    auto varError=luaL_loadbuffer(L,arg.bin->data(),arg.bin->size(),"?!");
+    if (LUA_OK==varError) {
+        if (lua_isfunction(L,-1)) {
+            return lua_pcall(L,argSize,LUA_MULTRET,0);
+        }
+        else { return 0/*just load something??*/; }
+    }
+    else { return varError; }
+}
+
 int LuaPreBuild::call(lua_State*L,Item&arg,int argSize) {
     enum { Error_Code=-1999 };
     if (L==nullptr) { return Error_Code; }
@@ -102,7 +118,7 @@ int LuaPreBuild::call(lua_State*L,Item&arg,int argSize) {
         if (lua_isfunction(L,-1)) {
             return lua_pcall(L,argSize,LUA_MULTRET,0);
         }
-        else { return 0/*just load something??*/;}
+        else { return 0/*just load something??*/; }
     }
     else { return varError; }
 }

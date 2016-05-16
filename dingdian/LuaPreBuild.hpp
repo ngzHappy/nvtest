@@ -39,6 +39,9 @@ public:
         std::shared_ptr<std::vector<char>>bin;
         Item() {}
         Item(const char *arg_d,std::size_t arg_l):data(arg_d),length(arg_l) {}
+        int call(lua_State*L,int argSize=0) const{
+            return LuaPreBuild::call(L,*this,argSize);
+        }
     };
 
     class BuildException :public std::logic_error {
@@ -48,7 +51,8 @@ public:
     };
 
     static void build(Item&)noexcept(false)/*BuildException*/;
-    static int call(lua_State*,Item&,int argSize=0)noexcept(false)/*BuildException*/;
+    static int call(lua_State*,const Item&,int argSize=0)noexcept(false)/*BuildException*/;
+    static int call(lua_State*,Item&,int argSize=0);
 protected:
     ~LuaPreBuild();
     void preBuild(Item&);

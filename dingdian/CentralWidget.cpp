@@ -7,6 +7,8 @@
 #include <NovelFile.hpp>
 #include <NovelWidget.hpp>
 #include <NovelLayout.hpp>
+#include "DingDianSytle.hpp"
+
 /*zone_namespace_begin*/
 template<>
 inline auto getThisData<zone_data::CentralWidgetData *,0>(const CentralWidget * arg) ->zone_data::CentralWidgetData * {
@@ -80,14 +82,15 @@ CentralWidget::CentralWidget():thisData_(ThisDataType(
     var_this_data->listView->setModel(new DingDianModel);
 
     {
+        auto varStyle=DingDianSytle::instance();
         auto varNovelLayout=std::make_shared<NovelLayout>();
         auto varFont=varNovelLayout->font();
-        varFont.setPixelSize(30);
+        varFont.setPixelSize(varStyle->fontPixSize());
         varFont.setWeight(QFont::Medium);
         varNovelLayout->setFont(varFont);
+        varNovelLayout->setDrawColor(varStyle->fontColor());
         var_this_data->novelWidget->setNovelLayout(varNovelLayout);
     }
-
 
     connect(
         var_this_data->listView,

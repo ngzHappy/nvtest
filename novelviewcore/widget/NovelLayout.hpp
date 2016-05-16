@@ -96,6 +96,14 @@ private:
     void _p_setHeight(_t_HEIGHT_t__ && /*height*/);
     template<typename _t_FONT_t__>
     void _p_setFont(_t_FONT_t__ && /*font*/);
+public:
+    void setDrawColor(const QColor& /*drawColor*/);
+    void setDrawColor(QColor&& /*drawColor*/);
+    const QColor & getDrawColor() const;
+    const QColor & drawColor() const{ return getDrawColor();}
+private: 
+    template<typename _t_DRAWCOLOR_t__>
+    void _p_setDrawColor(_t_DRAWCOLOR_t__ && /*drawColor*/);
 
 private:
     Q_PROPERTY(double width READ width WRITE setWidth NOTIFY widthChanged)

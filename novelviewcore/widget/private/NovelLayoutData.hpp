@@ -58,6 +58,7 @@ public:
     };
     std::shared_ptr<Page> currentPage;
     double firstLineSpace=0/*    */;
+    QColor drawColor{0,0,0,255};
 };
 
 }

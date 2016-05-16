@@ -33,6 +33,12 @@ public:
 
     static std::shared_ptr<DingDianSytle> instance();
 
+public:
+    void loadFile(const QString&);
+    void loadString(const QString&);
+    double fontPixSize()const;
+    QColor fontColor()const;
+    QString styleSheet()const;
 protected:
     ~DingDianSytle();
 

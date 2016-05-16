@@ -177,6 +177,8 @@ void drawPage(
         varPainter.setFont(var_this_data->font);
         varPainter.setRenderHint(QPainter::HighQualityAntialiasing);
         varPainter.setRenderHint(QPainter::TextAntialiasing);
+        varPainter.setPen(var_this_data->drawColor);
+        varPainter.setBrush(var_this_data->drawColor);
         auto & currentPage=*(var_this_data->currentPage);
         for (auto & line:currentPage.lines) {
             if (line.first<currentPage.lineBegin) { continue; }
@@ -487,6 +489,28 @@ void NovelLayout::setNeedLayout(const bool&_needLayout_) {
 void NovelLayout::setNeedLayout(bool&&_needLayout_) {
     _p_setNeedLayout(std::move(_needLayout_));
 }
+
+const QColor & NovelLayout::getDrawColor() const{
+    zone_const_this_data(this);
+    return var_this_data->drawColor;
+}
+
+template<typename _t_DRAWCOLOR_t__>
+void NovelLayout::_p_setDrawColor(_t_DRAWCOLOR_t__ &&_drawColor_){
+    zone_this_data(this);
+    if (var_this_data->drawColor==_drawColor_) { return; }
+    var_this_data->drawColor=_drawColor_;
+    layoutChanged({});
+}
+
+void NovelLayout::setDrawColor(const QColor&_drawColor_){
+    _p_setDrawColor(_drawColor_);
+}
+
+void NovelLayout::setDrawColor(QColor&&_drawColor_){
+    _p_setDrawColor(std::move(_drawColor_));
+}
+
 
 /*zone_namespace_end*/
 
