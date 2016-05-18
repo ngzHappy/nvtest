@@ -42,6 +42,7 @@ public:
         };
     };
     std::vector<Item> items;
+    double lineLeading;
     double lineHeight;
     double topSpaceOfPage;
     double linesOfPage;

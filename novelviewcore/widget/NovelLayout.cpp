@@ -288,6 +288,7 @@ void NovelLayout::_p_setFont(_t_FONT_t__ &&_font_) {
         var_this_data->fontMetrics.width(QStringLiteral("    "));
     /*获得行高*/
     var_this_data->lineHeight=var_this_data->fontMetrics.lineSpacing();
+    var_this_data->lineLeading=var_this_data->fontMetrics.leading();
     /*计算每页可以保存的行数*/
     double varLineCountOfPage=
         var_this_data->height/(var_this_data->lineHeight);
@@ -365,6 +366,10 @@ void NovelLayout::drawPage(std::int32_t argPage,QImage & argImage) {
     var_this_data->currentPage->lineBegin=varLine;
     var_this_data->currentPage->lineEnd=varEndLineNum;
 
+    /*布局常量*/
+    const auto & width=var_this_data->width;
+    const auto & leading=var_this_data->lineLeading;
+    const auto varLineHeight_=var_this_data->lineHeight-leading;
     /*布局*/
     for (; (varLineNum<varEndLineNum); ++varBlock) {
         if (varBlock==varBlockEnd) { break; }
@@ -378,8 +383,6 @@ void NovelLayout::drawPage(std::int32_t argPage,QImage & argImage) {
 
         {
             auto & layout=*varTextLayout;
-            auto & width=var_this_data->width;
-            auto leading=var_this_data->fontMetrics.leading();
             auto & height=dy;
             layout.beginLayout();
             bool isFirstLine=true;
@@ -398,7 +401,7 @@ void NovelLayout::drawPage(std::int32_t argPage,QImage & argImage) {
                     line.setLineWidth(width);
                     line.setPosition({ 0.0,height });
                 }
-                height+=line.height();
+                height+=varLineHeight_;
                 var_this_data->currentPage->lines.insert(
                 { varLineNum,std::move(line) });
             }
