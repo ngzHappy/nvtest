@@ -1,4 +1,5 @@
-﻿#include "MainWindow.hpp"
+﻿#include <cmath>
+#include "MainWindow.hpp"
 #include <QtWidgets/qapplication.h>
 #include <stdexcept>
 #include <QtCore/qresource.h>
@@ -10,6 +11,7 @@
 #include <QtCore/qtextstream.h>
 #include <QtCore/qfileinfo.h>
 #include <QtCore/qtextcodec.h>
+#include <QtWidgets/QDesktopWidget> 
 #include "DingDianSytle.hpp"
 static void drawAndSaveHelp() {
 
@@ -101,7 +103,28 @@ int main(int argc,char *argv[]) try{
             QString::fromUtf8(u8R"(http://www.23wx.com/html/18/18191/)"));
     }
 
-    window.showMaximized();
+    {
+        auto * desktopWidget=QApplication::desktop();
+        QRectF d_geometry=desktopWidget->availableGeometry();
+        double d_width=d_geometry.width();
+        double d_height=d_geometry.height();
+        enum {PWIDTH=(1024+128),PHEIGHT=(768+32)};
+        if ((d_width>=PWIDTH)&&(d_height>=PHEIGHT)) {
+            d_width=PWIDTH; 
+            d_height=PHEIGHT;
+        }
+        else {
+            d_width*=0.8;
+            d_height*=0.8;
+        }
+        
+        window.setGeometry(
+            int(d_geometry.x()+std::abs(d_geometry.width()-d_width)/2),
+            int(d_geometry.y()+std::abs(d_geometry.height()-d_height)/2),
+            int(d_width),int(d_height));
+
+        window.show();
+    }
 
     return app.exec();
 }
