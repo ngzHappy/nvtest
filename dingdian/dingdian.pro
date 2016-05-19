@@ -72,3 +72,6 @@ PRECOMPILED_HEADER  += $$PWD/private/app_pre_build.h
     QMAKE_LFLAGS += -Wl,-rpath .
 }
 DESTDIR = $$OUTPWD
+
+RESOURCES += \
+    source.qrc

@@ -1,6 +1,8 @@
 ﻿#include "MainWindow.hpp"
 #include <QtWidgets/qapplication.h>
 #include <stdexcept>
+#include <QtCore/qresource.h>
+#include <QtCore/qbytearray.h>
 #include <QtGui/qpainter.h>
 #include <QtCore/qfile.h>
 #include <QtGui/QDesktopServices>
@@ -31,24 +33,14 @@ static void drawAndSaveHelp() {
         file.open(QIODevice::WriteOnly|QIODevice::Text);
         QTextStream stream{&file};
         stream.setCodec(QTextCodec::codecForName("UTF-8"));
-        stream<<u8R"(
-style={
-    font={
-        pixsize=30;
-        color={0,0,0,255};
-    },
-    styleSheet=[[
-MainWindow{
-background:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-stop: 0 rgb(173,155,52), 
-stop: 0.4 rgb(170,146,60),
-stop: 0.8 rgb(168,150,55), 
-stop: 1.0 rgb(171,146,53));
-}
-    ]],
-}
-
-)";
+        QResource source(":/style.lua");
+        QByteArray source_data(
+            reinterpret_cast<const char *>(source.data()),
+            source.size());
+        if(source.isCompressed()){
+            source_data=qUncompress(source_data);
+        }
+        stream<<source_data;
     } while (false);
 
     {
