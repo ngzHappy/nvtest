@@ -33,6 +33,9 @@ public:
 
     static std::shared_ptr<DingDianSytle> instance();
 
+signals:
+    void styleChanged();
+
 public:
     void loadFile(const QString&);
     void loadString(const QString&);

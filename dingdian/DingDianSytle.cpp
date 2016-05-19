@@ -91,12 +91,6 @@ void DingDianSytle::loadFile(const QString &arg) {
     }
 }
 
-void DingDianSytle::loadString(const QString &arg) {
-    const auto varFile=arg.toUtf8()+"\r\n     ";
-    zone_this_data(this);
-    luaL_dostring(var_this_data->L,varFile.data());
-}
-
 namespace {
 class Lua_Lock {
     lua_State*L;
@@ -107,6 +101,14 @@ public:
     }
     ~Lua_Lock() { lua_settop(L,top_); }
 };
+}
+
+void DingDianSytle::loadString(const QString &arg) {
+    const auto varFile=arg.toUtf8()+"\r\n     ";
+    zone_this_data(this);
+    Lua_Lock argLock{var_this_data->L};
+    luaL_dostring(var_this_data->L,varFile.data());
+    styleChanged();
 }
 
 double DingDianSytle::fontPixSize()const {
