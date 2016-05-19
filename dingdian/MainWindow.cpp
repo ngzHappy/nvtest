@@ -50,8 +50,8 @@ MainWindow::MainWindow():
     zone_this_data(this);
     var_this_data->novelWidget=new CentralWidget;
     setCentralWidget(var_this_data->novelWidget);
-    this->setMinimumHeight(600);
-    this->setMinimumWidth(800);
+    this->setMinimumHeight(300);
+    this->setMinimumWidth(300);
     connect(var_this_data->novelWidget,
             &CentralWidget::titleChanged,
             this,
