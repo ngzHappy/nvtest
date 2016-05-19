@@ -9,6 +9,7 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qtextstream.h>
 #include <QtCore/qfileinfo.h>
+#include <QtCore/qtextcodec.h>
 #include "DingDianSytle.hpp"
 static void drawAndSaveHelp() {
 
