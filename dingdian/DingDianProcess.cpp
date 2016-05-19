@@ -5,6 +5,7 @@
 #include <gumbo/gumbo.h>
 #include <QtCore/qbuffer.h>
 #include <QtCore/qtextcodec.h>
+#include <QtCore/qregexp.h>
 #include <list>
 #include <string>
 #include <regex>
@@ -293,6 +294,43 @@ void DingDianProcess::setMainPage(QByteArray&&_mainPage_) {
     _p_setMainPage(std::move(_mainPage_));
 }
 
+
+namespace {
+namespace __private {
+
+/*
+something like:
+⑩顶⑩点⑩小⑩说
+*/
+void remove_ad(QString& line) {
+
+    /*设置正则表达式*/
+    const static QRegExp r_0=[]() {
+        constexpr const char * reg=
+            u8R"(顶(.*)点\1小\1说)";
+        QRegExp ans{QString::fromUtf8(reg)};
+        ans.setMinimal(true);
+        return std::move(ans);
+    }();
+
+    /*删除广告*/
+    {
+        QRegExp reg_=r_0;
+        auto index_=reg_.indexIn(line);
+        if (index_>=0) {
+            auto cap_=reg_.cap(1);
+            line.resize(index_);
+            if (line.endsWith(cap_)) {
+                line.resize(line.size()-cap_.size());
+                return;
+            }
+        }
+    }
+    
+}/*~remove_ad*/
+
+}
+}
 std::list<QString> DingDianProcess::processAPage(const QByteArray&argHtml)const {
     std::list<QString> varAns;
     if (argHtml.isEmpty()) { return{}; }
@@ -358,6 +396,7 @@ std::list<QString> DingDianProcess::processAPage(const QByteArray&argHtml)const 
 
             auto &children=rootNode->v.element.children;
             using IntType=std::remove_const_t<std::remove_reference_t<decltype(children.length)>>;
+            /*找到所有文本*/
             for (IntType i=0; i<children.length; ++i) {
                 nodes.push_back(reinterpret_cast<GumboNode *>(children.data[i]));
             }
@@ -372,12 +411,68 @@ std::list<QString> DingDianProcess::processAPage(const QByteArray&argHtml)const 
 
     using IntType=std::remove_const_t<std::remove_reference_t<
         decltype(textNode->v.element.children.length)>>;
-    for (IntType i=0; i<textNode->v.element.children.length; ++i) {
+
+    bool is_ad/*广告*/=false;
+    bool is_ad_next_is_br/*br*/=false;
+    const auto & children_length_=textNode->v.element.children.length;
+    for (IntType i=0; i<children_length_; ++i) {
         GumboNode * node=
             reinterpret_cast<GumboNode *>(textNode->v.element.children.data[i]);
         if (node->type==GUMBO_NODE_TEXT) {
-            varAns.push_back(QString::fromUtf8(node->v.text.text)
-            .trimmed());
+            if (false==is_ad) {
+                QString varLine=QString::fromUtf8(node->v.text.text)
+                    .trimmed();
+                varAns.push_back(std::move(varLine));
+            }
+            else {
+                is_ad=false;
+                QString varLine=QString::fromUtf8(node->v.text.text)
+                    .trimmed();
+                if (varAns.empty()==false) {
+                    auto & var_last_=*(varAns.rbegin());
+                    __private::remove_ad(var_last_);
+                    if (false==is_ad_next_is_br) {
+                        var_last_+=std::move(varLine);
+                    }
+                    else {
+                        varAns.push_back(std::move(varLine));
+                    }
+                }
+                else {
+                    /*when ans is empty???*/
+                    varAns.push_back(std::move(varLine));
+                }
+                
+            }
+        }
+        else if (node->type==GUMBO_NODE_ELEMENT) {
+            if (node->v.element.tag==GUMBO_TAG_DIV) {
+                auto & varChildren=node->v.element.children;
+                if (varChildren.length>0) {
+                    auto children_node=reinterpret_cast<GumboNode*>(varChildren.data[0]);
+                    if (children_node->type==GUMBO_NODE_ELEMENT) {
+                        if (children_node->v.element.tag==GUMBO_TAG_SCRIPT) {
+                            is_ad=true;
+                            const IntType i_next=i+1;
+                            if (i_next<children_length_) {
+                                GumboNode * node_next=
+                                    reinterpret_cast<GumboNode *>(textNode->v.element.children.data[i_next]);
+                                if (node_next->type==GUMBO_NODE_ELEMENT&&
+                                    node_next->v.element.tag==GUMBO_TAG_BR) {
+                                    is_ad_next_is_br=true;
+                                }
+                                else {
+                                    is_ad_next_is_br=false;
+                                }
+                            }
+                            else {
+                                is_ad_next_is_br=false;
+                            }
+                        }
+                    }
+                }
+            }
+            
         }
     }
 

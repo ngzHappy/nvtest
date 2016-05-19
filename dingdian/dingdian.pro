@@ -13,14 +13,11 @@ include( $$PWD/../novelviewcore/boost/boost.pri )
 INCLUDEPATH += $$PWD/../novelviewcore/widget
 
 CONFIG(debug,debug|release){
-win32-msvc*{
 CONFIG += console
-}
 LIBS+=-L$$OUTPWD -lnovelviewcored
 }else{
 LIBS+=-L$$OUTPWD -lnovelviewcore
 }
-
 
 HEADERS +=$$PWD/DingDianProcess.hpp
 HEADERS +=$$PWD/LuaPreBuild.hpp

@@ -100,7 +100,8 @@ int main(int argc,char *argv[]) try{
         window.setMainPage(
             QString::fromUtf8(u8R"(http://www.23wx.com/html/18/18191/)"));
     }
-    window.show();
+
+    window.showMaximized();
 
     return app.exec();
 }
