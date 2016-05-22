@@ -154,15 +154,15 @@ void doLayout(NovelLayout *argThis) {
         var_this_data->pagesCount=0;
         return;
     }
-    var_this_data->linesCount=var_this_data->items.rbegin()->endLine;
+    var_this_data->linesCount=1;
+    var_this_data->linesCount+=var_this_data->items.rbegin()->endLine;
 
     {
-        double pagesCount=
-            var_this_data->linesCount/var_this_data->linesOfPage;
-        auto pagesCountMore=std::modf(pagesCount,&pagesCount);
-        pagesCountMore*=var_this_data->linesOfPage;
-        pagesCount+=(pagesCountMore>=0.95);
-        var_this_data->pagesCount=std::int32_t(pagesCount+0.5);
+        auto varPagesCount=
+            std::ldiv(var_this_data->linesCount,var_this_data->linesOfPage);
+        var_this_data->pagesCount=
+            static_cast<std::int32_t>(varPagesCount.quot
+                +(varPagesCount.rem>0));
     }
 
 }
@@ -293,8 +293,12 @@ void NovelLayout::_p_setFont(_t_FONT_t__ &&_font_) {
     double varLineCountOfPage=
         var_this_data->height/(var_this_data->lineHeight);
     /*取出整数部分和余数部分*/
-    var_this_data->topSpaceOfPage=
-        std::modf(varLineCountOfPage,&(var_this_data->linesOfPage));
+    {
+        double var_lines_of_page;
+        var_this_data->topSpaceOfPage=
+            std::modf(varLineCountOfPage,&var_lines_of_page);
+        var_this_data->linesOfPage=static_cast<std::int32_t>(var_lines_of_page+0.5);
+    }
     /*计算余数部分对应的值*/
     var_this_data->topSpaceOfPage*=var_this_data->lineHeight;
     /*计算页眉*/

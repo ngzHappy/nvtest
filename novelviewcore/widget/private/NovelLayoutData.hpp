@@ -45,7 +45,7 @@ public:
     double lineLeading;
     double lineHeight;
     double topSpaceOfPage;
-    double linesOfPage;
+    std::int32_t linesOfPage;
     std::int32_t pagesCount;
     std::int32_t linesCount;
     bool needLayout=false;
