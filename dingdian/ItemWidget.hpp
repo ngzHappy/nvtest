@@ -46,6 +46,7 @@ public:
     virtual void aboutToDelete()override;
     virtual QRect geometry()const override;
 protected:
+    void contextMenuEvent(QContextMenuEvent *event) override;
     void paintEvent(QPaintEvent*)override;
     void renderToImage(QImage & argImage);
 };

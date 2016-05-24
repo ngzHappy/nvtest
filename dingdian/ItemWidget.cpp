@@ -5,6 +5,10 @@
 #include <QtGui/QPalette>
 #include <QtGui/QPainter>
 #include <iterator>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/qfiledialog.h>
+#include <QtGui/QContextMenuEvent> 
+#include <QtGui/QDesktopServices>
 
 /*zone_namespace_begin*/
 template<>
@@ -200,6 +204,18 @@ void ItemWidget::renderToImage(QImage & argImage) {
         text_);
 
     argImage=std::move(varImage);
+}
+
+void ItemWidget::contextMenuEvent(QContextMenuEvent *event) {
+    QMenu *varMenu=new QMenu(this);
+    QAction *varAction=varMenu->addAction(QString::fromUtf8(u8R"(打开网址)"));
+    connect(varAction,&QAction::triggered,
+        this,[this,varMenu] (bool){
+        varMenu->deleteLater();
+        zone_const_this_data(this);
+        QDesktopServices::openUrl(var_this_data->url_);
+    });
+    varMenu->exec(event->globalPos());
 }
 
 /*zone_namespace_end*/
