@@ -1,4 +1,5 @@
 ﻿/*HtmlDownLoad cpp*/
+#include <regex>
 #include "HtmlDownLoad.hpp"
 #include "private/HtmlDownLoadData.hpp"
 #include "private/HtmlDownLoadPrivateFunction.hpp"
@@ -6,7 +7,7 @@
 #include <QtCore/qdir.h>
 /*zone_namespace_begin*/
 template<>
-inline auto getThisData<zone_data::HtmlDownLoadData *,0>(const HtmlDownLoad * arg) ->zone_data::HtmlDownLoadData *{
+inline auto getThisData<zone_data::HtmlDownLoadData *,0>(const HtmlDownLoad * arg) ->zone_data::HtmlDownLoadData * {
     return const_cast<HtmlDownLoad *>(arg)->thisData_.get();
 }
 
@@ -32,7 +33,7 @@ HtmlDownLoadData::~HtmlDownLoadData() {
 
 }
 
-HtmlDownLoadThread::HtmlDownLoadThread(){
+HtmlDownLoadThread::HtmlDownLoadThread() {
     this->moveToThread(this);
     connect(this,&HtmlDownLoadThread::downLoad,
         this,&HtmlDownLoadThread::_p_downLoad,
@@ -42,19 +43,19 @@ HtmlDownLoadThread::HtmlDownLoadThread(){
     this->start();
 }
 
-void HtmlDownLoadThread::_p_downLoad(std::shared_ptr<HtmlDownLoadPack> argPack){
-     
-    if(argPack){
-        if(argPack->isNeedDownLoad()){
+void HtmlDownLoadThread::_p_downLoad(std::shared_ptr<HtmlDownLoadPack> argPack) {
+
+    if (argPack) {
+        if (argPack->isNeedDownLoad()) {
             const QUrl & varUrl=argPack->url();
-            
+
             {/*尝试读取缓存*/
                 const QString localCacheName=HtmlDownLoad::url2LocalCacheFileName(varUrl);
-                QFile file{localCacheName};
+                QFile file{ localCacheName };
                 if (file.open(QIODevice::ReadOnly)) {
-                    if (argPack->isCacheDownLoad()) { 
+                    if (argPack->isCacheDownLoad()) {
                         argPack->cacheDownLoadFinished(argPack);
-                        return; 
+                        return;
                     }
                     QByteArray varAns=file.readAll();
                     argPack->downLoadFinished(varAns,argPack);
@@ -81,9 +82,9 @@ void HtmlDownLoadThread::_p_downLoad(std::shared_ptr<HtmlDownLoadPack> argPack){
                             file.write(varData);
                         }
                     }
-                    if (argPack->isCacheDownLoad()) { 
+                    if (argPack->isCacheDownLoad()) {
                         argPack->cacheDownLoadFinished(argPack);
-                        return; 
+                        return;
                     }
                     argPack->downLoadFinished(varData,argPack);
                 });
@@ -96,49 +97,49 @@ void HtmlDownLoadThread::_p_downLoad(std::shared_ptr<HtmlDownLoadPack> argPack){
 HtmlDownLoadPack::HtmlDownLoadPack(
     HtmlDownLoad * argTarget,
     const QUrl & argUrl,
-    bool arg_isc):isCacheDownLoad_(arg_isc){
+    bool arg_isc):isCacheDownLoad_(arg_isc) {
     url_=argUrl;
-    if(argTarget){
+    if (argTarget) {
         isNeedDownLoad_=true;
         connect(this,&HtmlDownLoadPack::downLoadFinished,
                 argTarget,&HtmlDownLoad::downLoadFinished,Qt::QueuedConnection);
         connect(argTarget,&HtmlDownLoad::destroyed,
-                this,[this](QObject*){
-            isNeedDownLoad_=false;},Qt::QueuedConnection);
+                this,[this](QObject*) {
+            isNeedDownLoad_=false; },Qt::QueuedConnection);
         connect(this,&HtmlDownLoadPack::cacheDownLoadFinished,
             argTarget,&HtmlDownLoad::cacheDownLoadFinished,
             Qt::QueuedConnection);
     }
 }
 
-HtmlDownLoadThread::~HtmlDownLoadThread(){
+HtmlDownLoadThread::~HtmlDownLoadThread() {
     this->quit();
 }
 
-void HtmlDownLoadThread::aboutToStopThread(){
+void HtmlDownLoadThread::aboutToStopThread() {
     isAboutToExit_=true;
     this->quit();
     this->wait(11);
 }
 
-void HtmlDownLoadThread::run(){
-    if(isAboutToExit_==false){exec();}
+void HtmlDownLoadThread::run() {
+    if (isAboutToExit_==false) { exec(); }
 }
 
 std::shared_ptr<HtmlDownLoadThread> htmlDownLoadThread;
-std::shared_ptr<HtmlDownLoadThread> HtmlDownLoadThread::instance(){
-    if(htmlDownLoadThread){return htmlDownLoadThread;}
+std::shared_ptr<HtmlDownLoadThread> HtmlDownLoadThread::instance() {
+    if (htmlDownLoadThread) { return htmlDownLoadThread; }
     htmlDownLoadThread=std::shared_ptr<HtmlDownLoadThread>(
                 new HtmlDownLoadThread,
-                [](HtmlDownLoadThread *arg){
+                [](HtmlDownLoadThread *arg) {
         arg->quit();
         /*arg->wait(123);*/
         /*arg->terminate();*/
         /*arg->deleteLater();*/
     });
-    qAddPostRoutine([](){
+    qAddPostRoutine([]() {
         auto varHtmlDownLoadThread=htmlDownLoadThread;
-        if(varHtmlDownLoadThread){
+        if (varHtmlDownLoadThread) {
             varHtmlDownLoadThread->aboutToStopThread();
         }
         htmlDownLoadThread.reset();
@@ -156,8 +157,8 @@ namespace zone_private_function {
 }
 
 HtmlDownLoad::HtmlDownLoad():thisData_(ThisDataType(
-                                           new zone_data::HtmlDownLoadData,
-                                           [](zone_data::HtmlDownLoadData *arg){delete arg;})) {
+    new zone_data::HtmlDownLoadData,
+    [](zone_data::HtmlDownLoadData *arg) {delete arg; })) {
     connect(this,&HtmlDownLoad::download,
         this,[this](const QUrl & arg) {
         auto varDownLoadThread=zone_data::HtmlDownLoadThread::instance();
@@ -176,14 +177,108 @@ HtmlDownLoad::~HtmlDownLoad() {
 }
 
 QString HtmlDownLoad::url2LocalCacheFileName(const QUrl &varUrl) {
+
     static const QString appDir=[]()->QString {
+        /*创建app cache 目录*/
         QString ans=qApp->applicationDirPath();
         QDir dir{ ans };
         dir.mkpath(ans+"/appCache");
         return ans+"/appCache";
     }();
-    const auto localFileName=varUrl.toString().toUtf8()
+
+    const auto varUrlUtf8=varUrl.toString().toUtf8();
+
+    if (varUrlUtf8.isEmpty()) {
+        return{};
+    }
+
+    {/*如果是三级子目录......*/
+        const char * varBegin=varUrlUtf8.data();
+        const auto varLength=static_cast<std::size_t>(varUrlUtf8.length());
+
+        /* * html/0/0/0.html*/
+        const static std::regex varRegex{
+            u8R"(.*html/([0-9]+)/([0-9]+)/([0-9]+).html)" };
+
+        std::cmatch varMatchAns;
+
+        const auto varIsMatch=std::regex_match(
+            varBegin,
+            varBegin+varLength,
+            varMatchAns,
+            varRegex
+        );
+
+        if (varIsMatch) {
+
+            const QString varAppDir=[varString=varMatchAns[2].first,
+                varStringLength=varMatchAns[2].length(),
+                varRootString=varMatchAns[1].first,
+                varRootStringLength=varMatchAns[1].length()
+            ]()->QString {
+                /*创建app cache +小说名字 目录*/
+                QString ans=appDir;
+                QDir dir{ ans };
+                ans+="/"+QString::fromUtf8(varRootString,varRootStringLength)
+                    +"/"+QString::fromUtf8(varString,varStringLength);
+                dir.mkpath(ans);
+                return std::move(ans);
+            }();
+
+            return varAppDir+"/"
+                +QString::fromUtf8(
+                    varMatchAns[3].first,
+                    varMatchAns[3].length())
+                +".html";
+        }
+
+    }
+
+    {/*如果是二级子目录......*/
+        const char * varBegin=varUrlUtf8.data();
+        const auto varLength=static_cast<std::size_t>(varUrlUtf8.length());
+
+        /* * html/0/0/?*/
+        const static std::regex varRegex{
+            u8R"(.*html/([0-9]+)/([0-9]+)/?)" };
+
+        std::cmatch varMatchAns;
+
+        const auto varIsMatch=std::regex_match(
+            varBegin,
+            varBegin+varLength,
+            varMatchAns,
+            varRegex
+        );
+
+        if (varIsMatch) {
+
+            const QString varAppDir=[varString=varMatchAns[2].first,
+                varStringLength=varMatchAns[2].length(),
+                varRootString=varMatchAns[1].first,
+                varRootStringLength=varMatchAns[1].length()
+            ]()->QString {
+                /*创建app cache +小说名字 目录*/
+                QString ans=appDir;
+                QDir dir{ ans };
+                ans+="/"+QString::fromUtf8(varRootString,varRootStringLength)
+                    +"/"+QString::fromUtf8(varString,varStringLength);
+                dir.mkpath(ans);
+                return std::move(ans);
+            }();
+
+            return varAppDir+"/"
+                +QString::fromUtf8(
+                    varMatchAns[2].first,
+                    varMatchAns[2].length())
+                +".html";
+        }
+
+    }
+
+    const auto localFileName=varUrlUtf8
         .toBase64(QByteArray::Base64UrlEncoding);
+
     return appDir+"/"+localFileName+".html";
 }
 

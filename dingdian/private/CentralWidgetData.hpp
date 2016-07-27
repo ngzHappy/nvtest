@@ -18,7 +18,7 @@ namespace zone_data{
 class CentralWidgetData  {
 public:
     CentralWidgetData();
-    ~CentralWidgetData();
+    virtual ~CentralWidgetData();
 
     std::shared_ptr<NovelLayout> novelLayout;
     NovelWidget * novelWidget=nullptr;

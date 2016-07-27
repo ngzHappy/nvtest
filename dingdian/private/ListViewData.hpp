@@ -37,7 +37,7 @@ public:
 class ListViewData {
 public:
     ListViewData();
-    ~ListViewData();
+    virtual ~ListViewData();
 
     class Item {
         AbstractItemWidget * itemWidget_;

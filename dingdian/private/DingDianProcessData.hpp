@@ -11,7 +11,7 @@ namespace zone_data {
 class DingDianProcessData {
 public:
     DingDianProcessData();
-    ~DingDianProcessData();
+    virtual ~DingDianProcessData();
 
     QByteArray mainPage/*utf8*/;
 };

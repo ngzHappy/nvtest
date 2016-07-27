@@ -12,7 +12,7 @@ namespace zone_data {
 class MainWindowData {
 public:
     MainWindowData();
-    ~MainWindowData();
+    virtual ~MainWindowData();
 
     CentralWidget * novelWidget;
 };

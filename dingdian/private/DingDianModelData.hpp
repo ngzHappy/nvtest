@@ -11,7 +11,7 @@ namespace zone_data{
 class DingDianModelData  {
 public:
     DingDianModelData();
-    ~DingDianModelData();
+    virtual ~DingDianModelData();
 
     DingDianProcess::MainPage mainPage;
 

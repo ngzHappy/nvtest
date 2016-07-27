@@ -12,7 +12,7 @@ namespace zone_data{
 class DingDianSytleData  {
 public:
     DingDianSytleData();
-    ~DingDianSytleData();
+    virtual ~DingDianSytleData();
 
     lua_State * L;
 };

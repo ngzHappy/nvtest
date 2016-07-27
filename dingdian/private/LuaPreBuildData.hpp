@@ -12,7 +12,7 @@ namespace zone_data{
 class LuaPreBuildData  {
 public:
     LuaPreBuildData();
-    ~LuaPreBuildData();
+    virtual ~LuaPreBuildData();
 
     lua_State*L;
 

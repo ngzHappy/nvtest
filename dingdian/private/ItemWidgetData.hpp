@@ -12,7 +12,7 @@ namespace zone_data{
 class ItemWidgetData  {
 public:
     ItemWidgetData();
-    ~ItemWidgetData();
+    virtual ~ItemWidgetData();
 
     QColor normal_color_;
     QString text_;
