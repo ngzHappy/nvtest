@@ -219,7 +219,7 @@ QString HtmlDownLoad::url2LocalCacheFileName(const QUrl &varUrl) {
                 /*创建app cache +小说名字 目录*/
                 QString ans=appDir;
                 QDir dir{ ans };
-                ans+="/"+QString::fromUtf8(varRootString,varRootStringLength)
+                ans+="/html/"+QString::fromUtf8(varRootString,varRootStringLength)
                     +"/"+QString::fromUtf8(varString,varStringLength);
                 dir.mkpath(ans);
                 return std::move(ans);
@@ -261,7 +261,7 @@ QString HtmlDownLoad::url2LocalCacheFileName(const QUrl &varUrl) {
                 /*创建app cache +小说名字 目录*/
                 QString ans=appDir;
                 QDir dir{ ans };
-                ans+="/"+QString::fromUtf8(varRootString,varRootStringLength)
+                ans+="/html/"+QString::fromUtf8(varRootString,varRootStringLength)
                     +"/"+QString::fromUtf8(varString,varStringLength);
                 dir.mkpath(ans);
                 return std::move(ans);
