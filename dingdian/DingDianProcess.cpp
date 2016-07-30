@@ -236,9 +236,25 @@ void processMainPage(
 
     }
 
-    if (varAns.items.isEmpty()==false) {
-        for (auto & i:varAns.items) {
-            i.url=url+i.url;
+    {
+        while((url.isEmpty()==false)&&url.endsWith('/')) {
+            url.resize(url.size()-1);
+        }
+
+        if (url.isEmpty()) {
+            qDebug()<<"???"<<__LINE__<<__FILE__<<__func__;
+            return;
+        }
+
+        if (varAns.items.isEmpty()==false) {
+            for (auto & i:varAns.items) {
+                
+                while ((i.url.isEmpty()==false)&&i.url.startsWith('/')) {
+                    i.url=i.url.mid(1);
+                }
+
+                i.url=url+'/'+i.url;
+            }
         }
     }
 }
