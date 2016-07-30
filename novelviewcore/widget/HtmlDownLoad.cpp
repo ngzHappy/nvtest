@@ -198,7 +198,7 @@ QString HtmlDownLoad::url2LocalCacheFileName(const QUrl &varUrl) {
 
         /* * html/0/0/0.html*/
         const static std::regex varRegex{
-            u8R"(.*html/([0-9]+)/([0-9]+)/([0-9]+).html)" };
+            u8R"(.*html/+([0-9]+)/+([0-9]+)/+([0-9]+).html)" };
 
         std::cmatch varMatchAns;
 
@@ -240,7 +240,7 @@ QString HtmlDownLoad::url2LocalCacheFileName(const QUrl &varUrl) {
 
         /* * html/0/0/?*/
         const static std::regex varRegex{
-            u8R"(.*html/([0-9]+)/([0-9]+)/?)" };
+            u8R"(.*html/+([0-9]+)/+([0-9]+)/?)" };
 
         std::cmatch varMatchAns;
 
