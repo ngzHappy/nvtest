@@ -50,10 +50,24 @@ bool genUrl(const char * argText,QByteArray & ans) {
         for (auto i:values) {
             i=i.trimmed();
             if (i.startsWith("url=")) {
-                ans=i.mid(4);
+                ans=i.mid(4)/*remove url=*/;
                 if (ans.isEmpty()) { continue; }
-                if (ans.endsWith('/')||ans.endsWith('\\')) { return true; }
-                ans.push_back('/');
+
+                {
+                    auto varIndexPos=ans.indexOf(QLatin1Literal("//"));
+                    if (varIndexPos==-1) {
+                        /*not http://???*/
+                        continue;
+                    }
+                    varIndexPos+=2;
+                    {
+                        auto varAnsLeft=ans.left(varIndexPos);
+                        auto varAnsRight=ans.mid(varIndexPos);
+                        varAnsRight=varAnsRight.replace("//","/");
+                        ans=std::move(varAnsLeft)+std::move(varAnsRight);
+                    }
+                }
+
                 return true;
             }
         }
