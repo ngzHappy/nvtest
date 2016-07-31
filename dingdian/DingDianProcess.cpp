@@ -177,7 +177,12 @@ void processMainPage(
                     auto * attribute=gumbo_get_attribute(&element.attributes,"content");
                     if (attribute) {
                         if (genUrl(attribute->value,url)) {
-                            if (bodyNode) { break; }
+                            if (bodyNode) {
+                                /* http://m.23wx.com/html/63/63392/ */
+                                /* http://www.23wx.com/html/63/63392/ */
+                                url=url.replace("http://m.","http://www.");
+                                break;
+                            }
                         }
                     }
                 }
@@ -428,7 +433,7 @@ std::list<QString> DingDianProcess::processAPage(const QByteArray&argHtml)const 
             if (rootNode->type!=GUMBO_NODE_ELEMENT) { continue; }
             auto &element=rootNode->v.element;
 
-            if (element.tag==GUMBO_TAG_DIV) {
+            if (element.tag==GUMBO_TAG_DIV) {/*手机*/
                 auto * att_text=gumbo_get_attribute(&element.attributes,"class");
                 if (att_text) {
                     auto * att_id=gumbo_get_attribute(&element.attributes,"id");
@@ -439,6 +444,15 @@ std::list<QString> DingDianProcess::processAPage(const QByteArray&argHtml)const 
                                 break;
                             }
                         }
+                    }
+                }
+            }
+            else if (element.tag==GUMBO_TAG_DD) {/*电脑*/
+                auto * att_id=gumbo_get_attribute(&element.attributes,"id");
+                if (att_id) {
+                    if (att_id->value=="contents"s) {
+                        textNode=rootNode;
+                        break;
                     }
                 }
             }
