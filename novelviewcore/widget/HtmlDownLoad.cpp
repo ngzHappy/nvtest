@@ -74,7 +74,17 @@ void HtmlDownLoadThread::_p_downLoad(std::shared_ptr<HtmlDownLoadPack> argPack) 
                     varRep,[argPack,varRep]() {
                     varRep->deleteLater();
                     QByteArray varData=varRep->readAll();
-                    {/*写入缓存*/
+                    bool varNeedWrite=true;
+
+                    {
+                        /*<head><title>504 Gateway Time-out</title></head>*/
+                        if (varData.indexOf(
+                            u8R"(<head><title>504 Gateway Time-out</title></head>)")!=-1) {
+                            varNeedWrite=false;
+                        }
+                    }
+
+                    if (varNeedWrite) {/*写入缓存*/
                         const QUrl & varUrl=argPack->url();
                         const QString localCacheName=HtmlDownLoad::url2LocalCacheFileName(varUrl);
                         QFile file{ localCacheName };
@@ -82,10 +92,12 @@ void HtmlDownLoadThread::_p_downLoad(std::shared_ptr<HtmlDownLoadPack> argPack) 
                             file.write(varData);
                         }
                     }
+
                     if (argPack->isCacheDownLoad()) {
                         argPack->cacheDownLoadFinished(argPack);
                         return;
                     }
+
                     argPack->downLoadFinished(varData,argPack);
                 });
             }

@@ -251,7 +251,7 @@ void processMainPage(
     }
 
     {
-        while((url.isEmpty()==false)&&url.endsWith('/')) {
+        while ((url.isEmpty()==false)&&url.endsWith('/')) {
             url.resize(url.size()-1);
         }
 
@@ -262,7 +262,7 @@ void processMainPage(
 
         if (varAns.items.isEmpty()==false) {
             for (auto & i:varAns.items) {
-                
+
                 while ((i.url.isEmpty()==false)&&i.url.startsWith('/')) {
                     i.url=i.url.mid(1);
                 }
@@ -338,7 +338,7 @@ void remove_ad(QString& line) {
     const static QRegExp r_0=[]() {
         constexpr const char * reg=
             u8R"(顶(.*)点\1小\1说)";
-        QRegExp ans{QString::fromUtf8(reg)};
+        QRegExp ans{ QString::fromUtf8(reg) };
         ans.setMinimal(true);
         return std::move(ans);
     }();
@@ -356,14 +356,17 @@ void remove_ad(QString& line) {
             }
         }
     }
-    
+
 }/*~remove_ad*/
 
 }
 }
+
 std::list<QString> DingDianProcess::processAPage(const QByteArray&argHtml)const {
     std::list<QString> varAns;
-    if (argHtml.isEmpty()) { return{}; }
+    if (argHtml.isEmpty()) {
+        return{};
+    }
 
     QByteArray varHtml=argHtml;
     do {
@@ -376,6 +379,22 @@ std::list<QString> DingDianProcess::processAPage(const QByteArray&argHtml)const 
         }
 
     } while (false);
+
+    {/*如果是504error*/
+        /*
+        <html>
+        <head><title>504 Gateway Time-out</title></head>
+        <body bgcolor="white">
+        <center><h1>504 Gateway Time-out</h1></center>
+        <hr><center>nginx</center>
+        </body>
+        </html>
+        */
+        if (varHtml.indexOf(
+            u8R"(<head><title>504 Gateway Time-out</title></head>)")!=-1) {
+            return{};
+        }
+    }
 
     /*解析html*/
     class _GumboParser {
@@ -472,7 +491,7 @@ std::list<QString> DingDianProcess::processAPage(const QByteArray&argHtml)const 
                     /*when ans is empty???*/
                     varAns.push_back(std::move(varLine));
                 }
-                
+
             }
         }
         else if (node->type==GUMBO_NODE_ELEMENT) {
@@ -502,7 +521,7 @@ std::list<QString> DingDianProcess::processAPage(const QByteArray&argHtml)const 
                     }
                 }
             }
-            
+
         }
     }
 
